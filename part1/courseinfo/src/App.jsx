@@ -5,9 +5,9 @@ const Header = ({ course }) => {
 const Content = ({ parts }) => {
   return (
     <>
-      {parts.map((part) => (
+      {parts.map(part =>
         <Part key={part.name} name={part.name} exercises={part.exercises} />
-      ))}
+      )}
     </>
   );
 };
