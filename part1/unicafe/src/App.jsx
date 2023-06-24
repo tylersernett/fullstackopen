@@ -6,22 +6,31 @@ import { useState } from 'react'
 //   )
 // }
 
-const Statistics = ({good, neutral, bad}) => {
+const Statistics = ({ good, neutral, bad }) => {
   return (
     <>
       <h2>statistics</h2>
-      good: {good}
-      <br />
-      neutral: {neutral}
-      <br />
-      bad: {bad}
-      <br />
-      <br />
-      all: {good + bad + neutral}
-      <br />
-      average: {(good * 1 + bad * -1) / (good + bad + neutral)}
-      <br />
-      positive %: {good / (good + bad + neutral)}
+      {good!==0 || neutral!==0 || bad!==0 ? (
+        <>
+          good: {good}
+          <br />
+          neutral: {neutral}
+          <br />
+          bad: {bad}
+          <br />
+          <br />
+          all: {good + bad + neutral}
+          <br />
+          average: {(good * 1 + bad * -1) / (good + bad + neutral)}
+          <br />
+          positive %: {good / (good + bad + neutral)}
+        </>
+      ) : (
+        <>
+          No statistics
+        </>
+      )}
+
     </>
   )
 }
@@ -39,7 +48,7 @@ const App = () => {
       <button onClick={() => setNeutral((prev) => prev + 1)}>neutral</button>
       <button onClick={() => setBad((prev) => prev + 1)}>bad</button>
 
-    <Statistics good={good} neutral={neutral} bad={bad}/>
+      <Statistics good={good} neutral={neutral} bad={bad} />
 
     </div>
   )
