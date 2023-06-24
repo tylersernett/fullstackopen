@@ -6,24 +6,30 @@ import { useState } from 'react'
 //   )
 // }
 
+const StatLine = ({ text, value }) => {
+  console.log(text, value);
+  return (
+    <>
+      {text}: {value}
+      <br />
+    </>
+  )
+}
+
 const Statistics = ({ good, neutral, bad }) => {
   return (
     <>
       <h2>statistics</h2>
-      {good!==0 || neutral!==0 || bad!==0 ? (
+      {good !== 0 || neutral !== 0 || bad !== 0 ? (
         <>
-          good: {good}
+          <StatLine text='good' value={good} />
+          <StatLine text='neutral' value={neutral} />
+          <StatLine text='bad' value={bad} />
+
           <br />
-          neutral: {neutral}
-          <br />
-          bad: {bad}
-          <br />
-          <br />
-          all: {good + bad + neutral}
-          <br />
-          average: {(good * 1 + bad * -1) / (good + bad + neutral)}
-          <br />
-          positive %: {good / (good + bad + neutral)}
+          <StatLine text='all' value={good + bad + neutral} />
+          <StatLine text='average' value={(good * 1 + bad * -1) / (good + bad + neutral)} />
+          <StatLine text='positive %' value={100 * good / (good + bad + neutral) + '%'} />
         </>
       ) : (
         <>
