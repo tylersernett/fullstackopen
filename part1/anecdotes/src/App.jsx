@@ -12,18 +12,29 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
    
-  const [selected, setSelected] = useState(0)
-  const handleClick = () => {
+  const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(new Array(7).fill(0));
+
+  const handleRandomize = () => {
     const x = Math.floor(Math.random() * (anecdotes.length));
     console.log(x)
     setSelected(x)
+  }
+
+  const handleVote = () => {
+    const arrayCopy = [...votes];
+    arrayCopy[selected] += 1;
+    console.log(arrayCopy)
+    setVotes(arrayCopy);
   }
 
   return (
     <div>
       {anecdotes[selected]}
       <br/>
-      <button onClick={handleClick }>randomize</button>
+      <button onClick={handleVote }>Vote +1</button>
+      <br/>
+      <button onClick={handleRandomize }>randomize</button>
     </div>
   )
 }
