@@ -8,8 +8,14 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedPersons = [...persons, {name: newName}];
-    setPersons(updatedPersons);
+    const personExists = persons.some((person) => person.name === newName);
+
+    if (personExists) {
+      alert(`${newName} is already added to phonebook`);
+    } else {
+      const updatedPersons = [...persons, { name: newName }];
+      setPersons(updatedPersons);
+    }
   }
 
   const handleChange = (e) => {
@@ -21,7 +27,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={(e) => handleSubmit(e)}>
         <div>
-          name: <input value={newName} onChange={(e) => handleChange(e)}  />
+          name: <input value={newName} onChange={(e) => handleChange(e)} />
         </div>
         <div>
           <button type="submit">add</button>
@@ -29,7 +35,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person =><li key={person.name}>{person.name}</li> )}
+        {persons.map(person => <li key={person.name}>{person.name}</li>)}
       </ul>
     </div>
   )
