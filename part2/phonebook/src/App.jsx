@@ -16,32 +16,44 @@ const App = () => {
   const namesToShow = (filter === '') ? persons : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()));
 
   useEffect(() => {
-    personService.getAll()
-      .then(returnedPersons => {
-        setPersons(returnedPersons);
-      })
+    try {
+      personService.getAll()
+        .then(returnedPersons => {
+          setPersons(returnedPersons);
+        })
+    } catch (error) {
+      console.log('Failed to fetch persons:', error);
+    }
   }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const personExists = persons.filter((person) => person.name === newName);
+    const personExists = persons.find((person) => person.name === newName);
     const newPerson = { name: newName, number: newNumber }
 
-    if (personExists.length > 0) {
+    if (personExists) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old # with a new one?`)) {
-        const id = personExists[0].id
-        personService.update(id, newPerson)
-          .then(updatedPerson => {
-            console.log(updatedPerson)
-            setPersons(persons.map(person => person.id === id ? updatedPerson : person));
-          })
+        try {
+          const id = personExists.id
+          personService.update(id, newPerson)
+            .then(updatedPerson => {
+              console.log(updatedPerson)
+              setPersons(persons.map(person => person.id === id ? updatedPerson : person));
+            })
+        } catch (error) {
+          console.log('Failed to update person:', error);
+        }
       }
     } else {
-      personService.create(newPerson)
-        .then(newPerson => {
-          console.log(newPerson)
-          setPersons([...persons, newPerson]);
-        })
+      try {
+        personService.create(newPerson)
+          .then(createdPerson => {
+            console.log(createdPerson)
+            setPersons([...persons, createdPerson]);
+          })
+      } catch (error) {
+        console.log('Failed to create person:', error);
+      }
     }
   }
 
