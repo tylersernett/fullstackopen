@@ -1,4 +1,4 @@
-//hours spent on part2: 3
+//hours spent on part2: 5
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -16,11 +16,11 @@ const App = () => {
 
   useEffect(() => {
     axios.get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data);
-    })
+      .then(response => {
+        setPersons(response.data);
+      })
   }, [])
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const personExists = persons.some((person) => person.name === newName);
@@ -28,8 +28,11 @@ const App = () => {
     if (personExists) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      const updatedPersons = [...persons, { name: newName, number: newNumber }];
-      setPersons(updatedPersons);
+      const newPerson = { name: newName, number: newNumber }
+      setPersons([...persons, newPerson]);
+
+      axios.post('http://localhost:3001/persons', newPerson)
+        .then(response => { console.log(response) })
     }
   }
 
