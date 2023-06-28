@@ -24,13 +24,19 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const personExists = persons.some((person) => person.name === newName);
+    const personExists = persons.filter((person) => person.name === newName);
+    const newPerson = { name: newName, number: newNumber }
 
-    if (personExists) {
-      alert(`${newName} is already added to phonebook`);
+    if (personExists.length > 0) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old # with a new one?`)) {
+        const id = personExists[0].id
+        personService.update(id, newPerson)
+          .then(updatedPerson => {
+            console.log(updatedPerson)
+            setPersons(persons.map(person => person.id === id ? updatedPerson : person));
+          })
+      }
     } else {
-      const newPerson = { name: newName, number: newNumber }
-
       personService.create(newPerson)
         .then(newPerson => {
           console.log(newPerson)
