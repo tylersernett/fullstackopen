@@ -10,8 +10,25 @@ const Search = ({ searchString, setSearchString }) => {
   )
 }
 
+const DisplayCountry = ({ country }) => {
+  return (
+    <>
+      <h2>{country.name.common}</h2>
+      <div>capital: {country.capital}</div>
+      <div>area: {country.area}</div>
+      <h3>languages</h3>
+      <ul>
+        {Object.keys(country.languages).map(key => (
+          <li key={key}>{country.languages[key]}</li>
+        ))}
+      </ul>
+      <div><img src={`${country.flags.svg}`} height={'100px'} /></div>
+    </>
+  )
+}
+
 function App() {
-  const [countries, setCountries] = useState(null);
+  const [countries, setCountries] = useState([]);
   const [searchString, setSearchString] = useState("");
 
   const filteredCountries = countries.filter(country =>
@@ -33,7 +50,7 @@ function App() {
 
       {searchString !== "" &&
         filteredCountries.length === 1 ? (
-        <div>match</div>
+        <DisplayCountry country={filteredCountries[0]} />
       )
         :
         filteredCountries.length <= 10 ? (
