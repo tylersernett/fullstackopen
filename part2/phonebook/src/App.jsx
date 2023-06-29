@@ -1,4 +1,4 @@
-//hours spent on part2: 5.5
+//hours spent on part2: 6
 
 import { useState, useEffect } from 'react';
 import Filter from './components/Filter';
@@ -13,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
-  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   const namesToShow = (filter === '') ? persons : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()));
 
@@ -41,8 +41,13 @@ const App = () => {
             .then(updatedPerson => {
               console.log(updatedPerson)
               setPersons(persons.map(person => person.id === id ? updatedPerson : person));
-              setNotificationMessage(`Updated ${newName}`);
-              setTimeout(() => { setNotificationMessage(null) }, 5000)
+              setNotification({ text: `Updated ${newName}`, type: 'success' });
+              setTimeout(() => { setNotification(null) }, 5000)
+            })
+            .catch(error => {
+              console.log('Failed to find person "${newName}":', error);
+              setNotification({ text: `Info for ${newName} already deleted from server`, type: 'error' });
+              setTimeout(() => { setNotification(null) }, 5000)
             })
         } catch (error) {
           console.log('Failed to update person:', error);
@@ -54,8 +59,8 @@ const App = () => {
           .then(createdPerson => {
             console.log(createdPerson)
             setPersons([...persons, createdPerson]);
-            setNotificationMessage(`Added ${newName}`);
-            setTimeout(() => { setNotificationMessage(null) }, 5000)
+            setNotification({ text: `Added ${newName}`, type: 'success' });
+            setTimeout(() => { setNotification(null) }, 5000)
           })
       } catch (error) {
         console.log('Failed to create person:', error);
@@ -76,7 +81,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification notification={notification} />
       <Filter filter={filter} setFilter={setFilter} />
       <PersonForm newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} handleSubmit={handleSubmit} />
       <PersonDisplay namesToShow={namesToShow} handleDelete={handleDelete} />
