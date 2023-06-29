@@ -18,15 +18,16 @@ const App = () => {
   const namesToShow = (filter === '') ? persons : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()));
 
   useEffect(() => {
-    try {
-      personService.getAll()
-        .then(returnedPersons => {
-          setPersons(returnedPersons);
-        })
-    } catch (error) {
-      console.log('Failed to fetch persons:', error);
-    }
-  }, [])
+    personService.getAll()
+      .then(returnedPersons => { setPersons(returnedPersons) })
+      .catch(error => { console.log('Failed to fetch persons:', error) });
+  }, []);
+
+
+  const showNotification = (text, type) => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,59 +35,53 @@ const App = () => {
     const newPerson = { name: newName, number: newNumber }
 
     if (personExists) {
+      //UPDATE
       if (window.confirm(`${newName} is already added to phonebook, replace the old # with a new one?`)) {
-        try {
-          const id = personExists.id
-          personService.update(id, newPerson)
-            .then(updatedPerson => {
-              console.log(updatedPerson)
-              setPersons(persons.map(person => person.id === id ? updatedPerson : person));
-              setNotification({ text: `Updated ${newName}`, type: 'success' });
-              setTimeout(() => { setNotification(null) }, 5000)
-            })
-            .catch(error => {
-              console.log('Failed to find person "${newName}":', error);
-              setNotification({ text: `Info for ${newName} already deleted from server`, type: 'error' });
-              setTimeout(() => { setNotification(null) }, 5000)
-            })
-        } catch (error) {
-          console.log('Failed to update person:', error);
-        }
+        const id = personExists.id
+        personService.update(id, newPerson)
+          .then(updatedPerson => {
+            console.log(updatedPerson)
+            setPersons(persons.map(person => person.id === id ? updatedPerson : person));
+            showNotification(`Updated ${newName}`, 'success');
+          })
+          .catch(error => {
+            console.log(`Failed to find person "${newName}" on server:`, error);
+            showNotification(`Info for ${newName} already deleted from server`, 'error');
+          })
       }
     } else {
-      try {
-        personService.create(newPerson)
-          .then(createdPerson => {
-            console.log(createdPerson)
-            setPersons([...persons, createdPerson]);
-            setNotification({ text: `Added ${newName}`, type: 'success' });
-            setTimeout(() => { setNotification(null) }, 5000)
-          })
-      } catch (error) {
-        console.log('Failed to create person:', error);
-      }
-    }
-  }
-
-  const handleDelete = (name, id) => {
-    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-      personService.remove(id)
-        .then(response => {
-          console.log(response)
-          setPersons(persons.filter(person => person.id !== id))
+      //CREATE
+      personService.create(newPerson)
+        .then(createdPerson => {
+          console.log(createdPerson)
+          setPersons([...persons, createdPerson]);
+          showNotification(`Added ${newName}`, 'success');
         })
+        .catch(error => console.log(`Failed to create person ${newName}:`, error))
     }
   }
 
-  return (
-    <div>
-      <h2>Phonebook</h2>
-      <Notification notification={notification} />
-      <Filter filter={filter} setFilter={setFilter} />
-      <PersonForm newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} handleSubmit={handleSubmit} />
-      <PersonDisplay namesToShow={namesToShow} handleDelete={handleDelete} />
-    </div>
-  )
+const handleDelete = (name, id) => {
+  if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+    personService.remove(id)
+      .then(response => {
+        console.log(response)
+        setPersons(persons.filter(person => person.id !== id))
+        showNotification(`Deleted ${name}`, 'success');
+      })
+      .catch(error => console.log(`Failed to delete person ${name}:`, error))
+  }
+}
+
+return (
+  <div>
+    <h2>Phonebook</h2>
+    <Notification notification={notification} />
+    <Filter filter={filter} setFilter={setFilter} />
+    <PersonForm newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} handleSubmit={handleSubmit} />
+    <PersonDisplay namesToShow={namesToShow} handleDelete={handleDelete} />
+  </div>
+)
 }
 
 export default App
