@@ -20,7 +20,10 @@ const App = () => {
   useEffect(() => {
     personService.getAll()
       .then(returnedPersons => { setPersons(returnedPersons) })
-      .catch(error => { console.log('Failed to fetch persons:', error) });
+      .catch(error => {
+        console.log('Failed to fetch persons database:', error)
+        showNotification(`Failed to load database`, 'error');
+      });
   }, []);
 
 
@@ -57,31 +60,38 @@ const App = () => {
           setPersons([...persons, createdPerson]);
           showNotification(`Added ${newName}`, 'success');
         })
-        .catch(error => console.log(`Failed to create person ${newName}:`, error))
+        .catch(error => {
+          console.log(`Failed to create person ${newName}:`, error)
+          showNotification(`Failed to create entry for ${newName}`, 'error');
+        })
+
     }
   }
 
-const handleDelete = (name, id) => {
-  if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-    personService.remove(id)
-      .then(response => {
-        console.log(response)
-        setPersons(persons.filter(person => person.id !== id))
-        showNotification(`Deleted ${name}`, 'success');
-      })
-      .catch(error => console.log(`Failed to delete person ${name}:`, error))
+  const handleDelete = (name, id) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      personService.remove(id)
+        .then(response => {
+          console.log(response)
+          setPersons(persons.filter(person => person.id !== id))
+          showNotification(`Deleted ${name}`, 'success');
+        })
+        .catch(error => {
+          console.log(`Failed to delete person ${name}:`, error)
+          showNotification(`Failed to delete ${name}`, 'error');
+        })
+    }
   }
-}
 
-return (
-  <div>
-    <h2>Phonebook</h2>
-    <Notification notification={notification} />
-    <Filter filter={filter} setFilter={setFilter} />
-    <PersonForm newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} handleSubmit={handleSubmit} />
-    <PersonDisplay namesToShow={namesToShow} handleDelete={handleDelete} />
-  </div>
-)
+  return (
+    <div>
+      <h2>Phonebook</h2>
+      <Notification notification={notification} />
+      <Filter filter={filter} setFilter={setFilter} />
+      <PersonForm newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} handleSubmit={handleSubmit} />
+      <PersonDisplay namesToShow={namesToShow} handleDelete={handleDelete} />
+    </div>
+  )
 }
 
 export default App
