@@ -27,6 +27,17 @@ const DisplayCountry = ({ country }) => {
   )
 }
 
+const FilteredCountry = ({ country }) => {
+  const [showView, setShowView] = useState(false);
+  return (
+    <div>
+      {country.name.common}
+      <button onClick={() => setShowView(!showView)}>{showView ? 'Hide' : 'Show'}</button>
+      {showView && <DisplayCountry country={country} />}
+    </div>
+  )
+}
+
 function App() {
   const [countries, setCountries] = useState([]);
   const [searchString, setSearchString] = useState("");
@@ -55,7 +66,7 @@ function App() {
         :
         filteredCountries.length <= 10 ? (
           filteredCountries.map(country =>
-            <div key={country.name.common}>{country.name.common}</div>
+            <FilteredCountry key={country.name.common} country={country} />
           )
         ) : (
           <div>Too many matches, specify another filter</div>
