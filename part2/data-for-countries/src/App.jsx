@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react'
+//total time: 8 hr
+
 import axios from 'axios'
+import { useState, useEffect } from 'react'
 import './App.css'
+
+const api_key = import.meta.env.VITE_WEATHER_API_KEY;
 
 const Search = ({ searchString, setSearchString }) => {
   return (
@@ -10,19 +14,49 @@ const Search = ({ searchString, setSearchString }) => {
   )
 }
 
-const DisplayCountry = ({ country }) => {
+const CountryDetails = ({ country }) => {
+  const [weather, setWeather] = useState(null);
+  const capital = country.capital;
+
+  useEffect(() => {
+    axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}&units=metric`)
+      .then(response => {
+        setWeather(response.data)
+        console.log(response.data.weather[0].icon)
+      })
+      .catch(error => console.log(error))
+  }, [capital])
+
   return (
     <>
       <h2>{country.name.common}</h2>
-      <div>capital: {country.capital}</div>
+      <div>capital: {capital}</div>
       <div>area: {country.area}</div>
       <h3>languages</h3>
       <ul>
         {Object.keys(country.languages).map(key => (
-          <li key={key}>{country.languages[key]}</li>
+          <li key={country.languages[key]}>{country.languages[key]}</li>
         ))}
       </ul>
-      <div><img src={`${country.flags.svg}`} height={'100px'} /></div>
+      <div><img
+        src={`${country.flags.svg}`}
+        alt={`${country.name.common} flag`}
+        height={'100px'}
+      />
+      </div>
+
+      <h3>Weather in {capital}</h3>
+      {weather &&
+        <>
+          <div>temperature: {weather.main.temp} Celsius</div>
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+            alt={weather.weather[0].description}
+          />
+          <div>wind: {weather.wind.speed} m/s</div>
+        </>
+      }
+
     </>
   )
 }
@@ -33,7 +67,7 @@ const FilteredCountry = ({ country }) => {
     <div>
       {country.name.common}
       <button onClick={() => setShowView(!showView)}>{showView ? 'Hide' : 'Show'}</button>
-      {showView && <DisplayCountry country={country} />}
+      {showView && <CountryDetails country={country} />}
     </div>
   )
 }
@@ -49,11 +83,7 @@ function App() {
     axios.get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
       .then(response => setCountries(response.data))
       .catch(error => console.log(error))
-
-    return () => {
-    }
   }, [])
-
 
   return (
     <>
@@ -61,7 +91,7 @@ function App() {
 
       {searchString !== "" &&
         filteredCountries.length === 1 ? (
-        <DisplayCountry country={filteredCountries[0]} />
+        <CountryDetails country={filteredCountries[0]} />
       )
         :
         filteredCountries.length <= 10 ? (
