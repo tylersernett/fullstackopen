@@ -1,5 +1,3 @@
-//total time: 8 hr
-
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import './App.css'
@@ -22,7 +20,6 @@ const CountryDetails = ({ country }) => {
     axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}&units=metric`)
       .then(response => {
         setWeather(response.data)
-        console.log(response.data.weather[0].icon)
       })
       .catch(error => console.log(error))
   }, [capital])
