@@ -38,6 +38,7 @@ const App = () => {
     const newPerson = { name: newName, number: newNumber }
 
     if (personExists) {
+      console.log(personExists)
       //UPDATE
       if (window.confirm(`${newName} is already added to phonebook, replace the old # with a new one?`)) {
         const id = personExists.id
@@ -48,8 +49,8 @@ const App = () => {
             showNotification(`Updated ${newName}`, 'success');
           })
           .catch(error => {
-            console.log(`Failed to find person "${newName}" on server:`, error);
-            showNotification(`Info for ${newName} already deleted from server`, 'error');
+            console.log(error.response.data.error, error);
+            showNotification(error.response.data.error, 'error');
           })
       }
     } else {
