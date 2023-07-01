@@ -61,8 +61,8 @@ const App = () => {
           showNotification(`Added ${newName}`, 'success');
         })
         .catch(error => {
-          console.log(`Failed to create person ${newName}:`, error)
-          showNotification(`Failed to create entry for ${newName}`, 'error');
+          console.log(error.response.data.error)
+          showNotification(error.response.data.error, 'error');
         })
 
     }
