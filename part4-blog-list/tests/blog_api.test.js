@@ -167,6 +167,29 @@ test('creating a new blog post with missing url responds with 400 Bad Request', 
     .expect(400);
 });
 
+test('deleting a blog by ID', async () => {
+  const blogsBeforeDeletion = await blogsInDb();
+
+  // Choose an existing blog ID to delete
+  const blogToDelete = blogsBeforeDeletion[0];
+  const blogId = blogToDelete.id;
+
+  // Make a DELETE request to delete the blog
+  await api
+    .delete(`/api/blogs/${blogId}`)
+    .expect(204);
+
+  const blogsAfterDeletion = await blogsInDb();
+
+  // Verify that the total number of blogs is decreased by one
+  expect(blogsAfterDeletion).toHaveLength(blogsBeforeDeletion.length - 1);
+
+  // Verify that the deleted blog is no longer present
+  const deletedBlog = blogsAfterDeletion.find(blog => blog.id === blogId);
+  expect(deletedBlog).toBeUndefined();
+});
+
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
