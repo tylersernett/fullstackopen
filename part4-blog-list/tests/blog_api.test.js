@@ -189,6 +189,37 @@ test('deleting a blog by ID', async () => {
   expect(deletedBlog).toBeUndefined();
 });
 
+test('updating a blog by ID', async () => {
+  const blogsBeforeUpdate = await blogsInDb();
+
+  // Choose an existing blog ID to update
+  const blogToUpdate = blogsBeforeUpdate[0];
+  const blogId = blogToUpdate.id;
+
+  const updatedBlogData = {
+    author: 'Updated Author',
+    title: 'Updated Title',
+    url: 'http://www.example.com/updated',
+    likes: 100
+  };
+
+  // Make a PUT request to update the blog
+  await api
+    .put(`/api/blogs/${blogId}`)
+    .send(updatedBlogData)
+    .expect(200);
+
+  const blogsAfterUpdate = await blogsInDb();
+
+  // Find the updated blog
+  const updatedBlog = blogsAfterUpdate.find(blog => blog.id === blogId);
+
+  // Verify that the blog has been updated with the new data
+  expect(updatedBlog.author).toBe(updatedBlogData.author);
+  expect(updatedBlog.title).toBe(updatedBlogData.title);
+  expect(updatedBlog.url).toBe(updatedBlogData.url);
+  expect(updatedBlog.likes).toBe(updatedBlogData.likes);
+});
 
 afterAll(async () => {
   await mongoose.connection.close()
