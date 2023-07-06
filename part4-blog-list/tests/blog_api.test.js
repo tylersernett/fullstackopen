@@ -84,6 +84,33 @@ test('blogs have id identifier', async () => {
   expect(blogs[0].id).toBeDefined()
 })
 
+test('creating a new blog post', async () => {
+  const newBlog = {
+    title: 'Test Blog',
+    author: 'Test Author',
+    url: 'http://www.exampleblog.com/1',
+    likes: 13,
+  };
+
+  // Make a POST request to create a new blog post
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  // Verify that the total number of blogs is increased by one
+  const blogsAfterCreation = await api.get('/api/blogs');
+  expect(blogsAfterCreation.body.length).toBe(initialBlogs.length + 1);
+
+  // Verify that the content of the blog post is saved correctly
+  const createdBlog = blogsAfterCreation.body.find(
+    (blog) => blog.id === response.body.id
+  );
+  expect(createdBlog.title).toBe(newBlog.title);
+  expect(createdBlog.author).toBe(newBlog.author);
+  expect(createdBlog.content).toBe(newBlog.content);
+});
 
 afterAll(async () => {
   await mongoose.connection.close()
