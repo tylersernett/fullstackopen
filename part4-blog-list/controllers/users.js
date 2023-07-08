@@ -7,11 +7,14 @@ usersRouter.get('/', async (requests, response) => {
   response.status(200).json(users);
 })
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
 
   if (password.length < 3) {
-    return response.status(400).json({error: 'password too short'})
+    const error = new Error('Password too short or missing')
+    error.name = 'PWError'
+    error.status = 400
+    return next(error)
   }
 
   const saltRounds = 10
