@@ -2,7 +2,9 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const initialBlogs = helper.initialBlogs;
@@ -39,12 +41,24 @@ describe('when initial blogs are saved', () => {
 })
 
 describe('creating new blog', () => {
+  let userId;
+
+  beforeAll(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash('sekret', 10);
+    const user = new User({ username: 'root', passwordHash });
+    await user.save();
+    const users = await api.get('/api/users');
+    userId = users.body[0].id;
+  });
+
   test('succeeds with status 201 if data is valid', async () => {
     const newBlog = {
       title: 'Test Blog',
       author: 'Test Author',
       url: 'http://www.exampleblog.com/1',
       likes: 13,
+      userId: userId
     };
 
     // Make a POST request to create a new blog post
@@ -73,6 +87,7 @@ describe('creating new blog', () => {
       title: 'Test Blog No Like',
       author: 'Test Author No Like',
       url: 'http://www.examplenolike.com/1',
+      userId: userId
     };
 
     // Make a POST request to create a new blog post
@@ -101,6 +116,7 @@ describe('creating new blog', () => {
       author: 'Test Author',
       url: 'http://www.exampleblog.com/1',
       likes: 13,
+      userId: userId,
     };
 
     await api
@@ -114,6 +130,7 @@ describe('creating new blog', () => {
       title: 'Test Blog',
       author: 'Test Author',
       likes: 13,
+      userId: userId,
     };
 
     await api
@@ -159,7 +176,7 @@ describe('updating a blog', () => {
       author: 'Updated Author',
       title: 'Updated Title',
       url: 'http://www.example.com/updated',
-      likes: 100
+      likes: 100,
     };
 
     // Make a PUT request to update the blog
