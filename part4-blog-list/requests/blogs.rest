@@ -36,3 +36,22 @@ content-type: application/json
   "likes": 7,
   "userId": "64aa2f05428d24cb79c92db3"
 }
+
+### JWT TOKEN
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer TOKEN.HERE
+
+{
+  "title": "My S S222",
+  "author": "S S Sample",
+  "url": "http://www.sss.com/sss.html",
+  "likes": 8,
+  "userId": "64a9de1982e182ccf5d345f2"
+}
+
+###
+DELETE http://localhost:3003/api/blogs/64aa527c8b3397dde18ec162 HTTP/1.1
+content-type: application/json
+Authorization: Bearer TOKEN.HERE
