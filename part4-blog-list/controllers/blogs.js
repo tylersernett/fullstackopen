@@ -2,29 +2,28 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.status(200).json(blogs);
 })
 
-blogsRouter.post('/', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
-
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const blog = new Blog(request.body)
   if (!blog.title || !blog.url) {
     return response.status(400).json({ error: 'Title and URL are required fields' });
   }
 
-  //only userId is sent in request. 
+  const user = request.user
   blog.user = user.id;
   const savedBlog = await blog.save();
 
-  user.blogs = user.blogs.concat(savedBlog._id);
+  if (!user.blogs) { user.blogs = [savedBlog._id] } else {
+
+    user.blogs = user.blogs.concat(savedBlog._id);
+  }
+
   await user.save();
   response.status(201).json(savedBlog);
 })
@@ -36,18 +35,15 @@ blogsRouter.get('/:id', async (request, response) => {
   response.status(200).json(foundBlog);
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+  const userId = request.user.id;
   const id = request.params.id;
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  console.log(decodedToken)
-  const userId = decodedToken.id;
 
   const blog = await Blog.findById(id);
+  if (!blog) {
+    return response.status(404).json({ error: 'Blog not found' });
+  }
 
-  console.log('u:', blog.user.toString(), " ... uid: ", userId)
   if (blog.user.toString() !== userId) {
     return response.status(403).json({ error: 'Unauthorized' });
   }
