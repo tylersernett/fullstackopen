@@ -1,0 +1,57 @@
+GET http://localhost:3003/api/blogs HTTP/1.1
+
+
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "Go To Statement Considered Harmful",
+  "author": "Edsger W. Dijkstra",
+  "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+  "likes": 5
+}
+
+###
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "My Sample Blogpost",
+  "author": "Thom Sample",
+  "url": "http://www.sampleblog.com/post1.html",
+  "likes": 4
+}
+
+###
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "My Sample Submission",
+  "author": "Subby Sample",
+  "url": "http://www.sampleblog.com/submit1.html",
+  "likes": 7,
+  "userId": "64aa2f05428d24cb79c92db3"
+}
+
+### JWT TOKEN
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer TOKEN.HERE
+
+{
+  "title": "My S S222",
+  "author": "S S Sample",
+  "url": "http://www.sss.com/sss.html",
+  "likes": 8,
+  "userId": "64a9de1982e182ccf5d345f2"
+}
+
+###
+DELETE http://localhost:3003/api/blogs/64aa527c8b3397dde18ec162 HTTP/1.1
+content-type: application/json
+Authorization: Bearer TOKEN.HERE
