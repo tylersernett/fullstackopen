@@ -1,0 +1,54 @@
+GET http://localhost:3003/api/users HTTP/1.1
+
+###
+
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+  "username": "n_mcname",
+  "name": "Namey McNameface",
+  "password": "blahblahpw",
+}
+
+###
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+  "username": "b_pw",
+  "name": "Too Short Password",
+  "password": "12"
+}
+
+###
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+  "username": "no_pw",
+  "name": "No Password",
+  "password": ""
+}
+
+###
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+  "username": "newuser",
+  "name": "Blab Blabby",
+  "password": "bbbbbb",
+  "blogs": []
+}
+
+# ###
+# POST http://localhost:3003/api/users HTTP/1.1
+# content-type: application/json
+
+# {
+#   "username": "sub_mitter",
+#   "name": "Submission Test",
+#   "password": "coolpassword",
+
+# }
