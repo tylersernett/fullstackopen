@@ -10,11 +10,33 @@ const helper = require('./test_helper')
 const initialBlogs = helper.initialBlogs;
 const blogsInDb = helper.blogsInDb;
 
+//create dummy user / token
+let userId;
+let token;
+beforeAll(async () => {
+  await User.deleteMany({});
+  const passwordHash = await bcrypt.hash('sekret', 10);
+  const user = new User({ username: 'newroot', passwordHash });
+  await user.save();
+
+  // Authenticate the user and get the JWT token
+  const response = await api
+    .post('/api/login')
+    .send({ username: 'newroot', password: 'sekret' })
+    .expect(200);
+
+  token = response.body.token;
+  const users = await api.get('/api/users');
+  userId = users.body[0].id;
+});
+
+//create dummy blogposts with the dummy user above as the creator
 beforeEach(async () => {
   await Blog.deleteMany({})
 
   for (const blog of initialBlogs) {
     let blogObject = new Blog(blog);
+    blogObject.user = userId;
     await blogObject.save();
   }
 })
@@ -41,17 +63,6 @@ describe('when initial blogs are saved', () => {
 })
 
 describe('creating new blog', () => {
-  let userId;
-
-  beforeAll(async () => {
-    await User.deleteMany({});
-    const passwordHash = await bcrypt.hash('sekret', 10);
-    const user = new User({ username: 'root', passwordHash });
-    await user.save();
-    const users = await api.get('/api/users');
-    userId = users.body[0].id;
-  });
-
   test('succeeds with status 201 if data is valid', async () => {
     const newBlog = {
       title: 'Test Blog',
@@ -64,6 +75,7 @@ describe('creating new blog', () => {
     // Make a POST request to create a new blog post
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -93,6 +105,7 @@ describe('creating new blog', () => {
     // Make a POST request to create a new blog post
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -121,6 +134,7 @@ describe('creating new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400);
   });
@@ -135,9 +149,52 @@ describe('creating new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400);
   });
+
+  test('fails with status 401 if no token is provided', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://www.exampleblog.com/1',
+      likes: 13,
+      userId: userId,
+    };
+
+    // Make a POST request to create a new blog post without providing a token
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    // Verify the error message or response body as needed
+    expect(response.body.error).toBe('jwt must be provided');
+  });
+
+  test('fails with status 400 if token is malformed', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://www.exampleblog.com/1',
+      likes: 13,
+      userId: userId,
+    };
+
+    // Make a POST request to create a new blog post with malformed token
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer awefawef123123`)
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    // Verify the error message or response body as needed
+    expect(response.body.error).toBe('jwt malformed');
+  });
+
 })
 
 describe('deleting a blog', () => {
@@ -149,8 +206,9 @@ describe('deleting a blog', () => {
     const blogId = blogToDelete.id;
 
     // Make a DELETE request to delete the blog
-    await api
+    const log = await api
       .delete(`/api/blogs/${blogId}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204);
 
     const blogsAfterDeletion = await blogsInDb();
