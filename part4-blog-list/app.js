@@ -22,6 +22,8 @@ const blogsRouter = require('./controllers/blogs')
 app.use('/api/blogs', blogsRouter)
 const usersRouter = require('./controllers/users')
 app.use('/api/users', usersRouter)
+const loginRouter = require('./controllers/login')
+app.use('/api/login', loginRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
