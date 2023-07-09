@@ -10,11 +10,11 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {    
-    return response.status(401).json({ error: 'token invalid' })  
-  }  
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
   const user = await User.findById(decodedToken.id)
-  
+
   const blog = new Blog(request.body)
   if (!blog.title || !blog.url) {
     return response.status(400).json({ error: 'Title and URL are required fields' });
@@ -38,6 +38,19 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   const id = request.params.id;
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  console.log(decodedToken)
+  const userId = decodedToken.id;
+
+  const blog = await Blog.findById(id);
+
+  console.log('u:', blog.user.toString(), " ... uid: ", userId)
+  if (blog.user.toString() !== userId) {
+    return response.status(403).json({ error: 'Unauthorized' });
+  }
 
   const deletedBlog = await Blog.findByIdAndDelete(id);
   response.status(204).end()
