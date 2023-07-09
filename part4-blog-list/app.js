@@ -16,6 +16,7 @@ const Blog = require('./models/blog')
 app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
+app.use(middleware.tokenExtractor)
 
 //define routes AFTER the body parser or request.body is undefined
 const blogsRouter = require('./controllers/blogs')
