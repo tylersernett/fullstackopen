@@ -32,33 +32,38 @@ const LoginForm = ({ username, setUsername, password, setPassword, handleLogin }
   )
 }
 
-const BlogForm = ({newBlog, setNewBlog, addBlog}) => (
-  <form onSubmit={''}>
-    <h2>Create New Blog</h2>
-    <div>
-      title:
-      <input
-        value={''}
-        onChange={''}
-      />
-    </div>
-    <div>
-      author:
-      <input
-        value={''}
-        onChange={''}
-      />
-    </div>
-    <div>
-      URL:
-      <input
-        value={''}
-        onChange={''}
-      />
-    </div>
-    <button type="submit">create</button>
-  </form>
-)
+const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
+
+  const { title, url, author } = newBlog
+
+  return (
+    <form onSubmit={addBlog}>
+      <h2>Create New Blog</h2>
+      <div>
+        title:
+        <input
+          value={title}
+          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+        />
+      </div>
+      <div>
+        author:
+        <input
+          value={author}
+          onChange={(e) => setNewBlog({ ...newBlog, author: e.target.value })}
+        />
+      </div>
+      <div>
+        URL:
+        <input
+          value={url}
+          onChange={(e) => setNewBlog({ ...newBlog, url: e.target.value })}
+        />
+      </div>
+      <button type="submit">create</button>
+    </form>
+  )
+}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -79,6 +84,7 @@ const App = () => {
     console.log('logging in with', username, password)
     try {
       const user = await loginService.login({ username, password, })
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -89,13 +95,19 @@ const App = () => {
       }, 5000)
     }
   }
-  
-  const addBlog = async(event) => {
+
+  const addBlog = async (event) => {
     event.preventDefault()
     console.log('creating newblog:', newBlog)
+    try {
+      await blogService.create(newBlog)
+    } catch (exception) {
+      setErrorMessage('Adding Blogpost Failed')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
   }
-
-
 
   return (
     <div>
@@ -107,7 +119,7 @@ const App = () => {
         :
         <>
           <p>{user.name} logged in</p>
-          <BlogForm newBlog={newBlog} setNewBlog={setNewBlog} addBlog={addBlog}/>
+          <BlogForm newBlog={newBlog} setNewBlog={setNewBlog} addBlog={addBlog} />
           <h2>blogs</h2>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
