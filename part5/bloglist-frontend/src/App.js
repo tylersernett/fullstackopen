@@ -123,6 +123,7 @@ const App = () => {
       await blogService.create(newBlog)
       const updatedBlogs = await blogService.getAll() // Fetch the updated list of blogs
       setBlogs(updatedBlogs) // Update the state with the new list of blogs
+      showNotification(`Succesfully added "${newBlog.title}" by ${newBlog.author}`, 'success')
       setNewBlog({ title: '', author: '', url: '' }) // Reset the newBlog state
     } catch (exception) {
       showNotification('Adding Blogpost Failed', 'error')
