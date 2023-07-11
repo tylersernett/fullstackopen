@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+
 const LoginForm = ({ username, setUsername, password, setPassword, handleLogin }) => {
   return (
     <div>
@@ -31,12 +32,41 @@ const LoginForm = ({ username, setUsername, password, setPassword, handleLogin }
   )
 }
 
+const BlogForm = ({newBlog, setNewBlog, addBlog}) => (
+  <form onSubmit={''}>
+    <h2>Create New Blog</h2>
+    <div>
+      title:
+      <input
+        value={''}
+        onChange={''}
+      />
+    </div>
+    <div>
+      author:
+      <input
+        value={''}
+        onChange={''}
+      />
+    </div>
+    <div>
+      URL:
+      <input
+        value={''}
+        onChange={''}
+      />
+    </div>
+    <button type="submit">create</button>
+  </form>
+)
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState('');
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -59,7 +89,11 @@ const App = () => {
       }, 5000)
     }
   }
-  // 
+  
+  const addBlog = async(event) => {
+    event.preventDefault()
+    console.log('creating newblog:', newBlog)
+  }
 
 
 
@@ -73,6 +107,7 @@ const App = () => {
         :
         <>
           <p>{user.name} logged in</p>
+          <BlogForm newBlog={newBlog} setNewBlog={setNewBlog} addBlog={addBlog}/>
           <h2>blogs</h2>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
