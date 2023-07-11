@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 const LoginForm = ({ username, setUsername, password, setPassword, handleLogin }) => {
   return (
@@ -69,8 +70,8 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('');
+  const [user, setUser] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
   useEffect(() => {
@@ -88,6 +89,13 @@ const App = () => {
     }
   }, [])
 
+  let notificationTimeout = null;
+  const showNotification = (text, type) => {
+    clearTimeout(notificationTimeout);
+    setNotification({ text, type });
+    notificationTimeout = setTimeout(() => setNotification(null), 5000);
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
@@ -99,10 +107,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      showNotification('Wrong credentials', 'error')
     }
   }
 
@@ -116,17 +121,18 @@ const App = () => {
     console.log('creating newblog:', newBlog)
     try {
       await blogService.create(newBlog)
+      const updatedBlogs = await blogService.getAll() // Fetch the updated list of blogs
+      setBlogs(updatedBlogs) // Update the state with the new list of blogs
+      setNewBlog({ title: '', author: '', url: '' }) // Reset the newBlog state
     } catch (exception) {
-      setErrorMessage('Adding Blogpost Failed')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      showNotification('Adding Blogpost Failed', 'error')
     }
   }
 
   return (
     <div>
       <h1>Blogs</h1>
+      <Notification notification={notification} />
       {user === null ?
         <LoginForm
           username={username} setUsername={setUsername}
