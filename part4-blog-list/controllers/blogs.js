@@ -45,7 +45,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   }
 
   if (blog.user.toString() !== userId) {
-    return response.status(403).json({ error: 'Unauthorized' });
+    return response.status(403).json({ error: 'Forbidden: only owner can delete' });
   }
 
   const deletedBlog = await Blog.findByIdAndDelete(id);
