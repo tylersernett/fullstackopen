@@ -57,7 +57,9 @@ const App = () => {
     try {
       await blogService.create(blogObj)
       blogformRef.current.toggleVisibility()
-      setBlogs(blogs.concat(blogObj)) // Update the state with the new list of blogs
+      const updatedBlogs = await blogService.getAll()
+      setBlogs(updatedBlogs) //don't just do blogs.concat(blogObj)...
+      //...this will not have the user, as the user is extracted by the backend
       showNotification(`Succesfully added "${blogObj.title}" by ${blogObj.author}`, 'success')
       return true
     } catch (exception) {
