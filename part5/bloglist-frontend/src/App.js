@@ -35,6 +35,17 @@ const App = () => {
     notificationTimeout = setTimeout(() => setNotification(null), 5000);
   };
 
+  const fetchAndUpdateBlogs = async () => {
+    try {
+      const updatedBlogs = await blogService.getAll()
+      setBlogs(updatedBlogs)
+      //don't just do setBlogs( blogs.concat(blogObj) )...
+      //...this will not have the user, as the user is extracted by the backend
+    } catch (error) {
+      showNotification('Fetching Blogs Failed', 'error')
+    }
+  };
+
   const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({ username, password, })
@@ -53,13 +64,20 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
+  const handleLike = async (id, blogObj) => {
+    try {
+      await blogService.update(id, blogObj)
+      fetchAndUpdateBlogs();
+    } catch {
+      showNotification('Like Failed', 'error')
+    }
+  }
+
   const createBlog = async (blogObj) => {
     try {
       await blogService.create(blogObj)
       blogformRef.current.toggleVisibility()
-      const updatedBlogs = await blogService.getAll()
-      setBlogs(updatedBlogs) //don't just do blogs.concat(blogObj)...
-      //...this will not have the user, as the user is extracted by the backend
+      await fetchAndUpdateBlogs();
       showNotification(`Succesfully added "${blogObj.title}" by ${blogObj.author}`, 'success')
       return true
     } catch (exception) {
@@ -84,7 +102,7 @@ const App = () => {
 
           <h2>blogs</h2>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} handleLike={handleLike} />
           )}
         </>
       }
