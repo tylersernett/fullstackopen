@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Blogform from './components/Blogform'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 
@@ -34,46 +35,12 @@ const LoginForm = ({ username, setUsername, password, setPassword, handleLogin }
   )
 }
 
-const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
-
-  const { title, url, author } = newBlog
-
-  return (
-    <form onSubmit={addBlog}>
-      <h2>Create New Blog</h2>
-      <div>
-        title:
-        <input
-          value={title}
-          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-        />
-      </div>
-      <div>
-        author:
-        <input
-          value={author}
-          onChange={(e) => setNewBlog({ ...newBlog, author: e.target.value })}
-        />
-      </div>
-      <div>
-        URL:
-        <input
-          value={url}
-          onChange={(e) => setNewBlog({ ...newBlog, url: e.target.value })}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
-  )
-}
-
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -117,15 +84,11 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    console.log('creating newblog:', newBlog)
+  const createBlog = async (blogObj) => {
     try {
-      await blogService.create(newBlog)
-      const updatedBlogs = await blogService.getAll() // Fetch the updated list of blogs
-      setBlogs(updatedBlogs) // Update the state with the new list of blogs
-      showNotification(`Succesfully added "${newBlog.title}" by ${newBlog.author}`, 'success')
-      setNewBlog({ title: '', author: '', url: '' }) // Reset the newBlog state
+      await blogService.create(blogObj)
+      setBlogs(blogs.concat(blogObj)) // Update the state with the new list of blogs
+      showNotification(`Succesfully added "${blogObj.title}" by ${blogObj.author}`, 'success')
     } catch (exception) {
       showNotification('Adding Blogpost Failed', 'error')
     }
@@ -145,7 +108,7 @@ const App = () => {
           <p>{user.name} logged in<button onClick={() => handleLogout()}>logout</button></p>
 
           <Togglable buttonLabel="new blog">
-            <BlogForm newBlog={newBlog} setNewBlog={setNewBlog} addBlog={addBlog} />
+            <Blogform createBlog={createBlog} />
           </Togglable>
 
           <h2>blogs</h2>
