@@ -41,8 +41,10 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
+      return user
     } catch (exception) {
       showNotification('Wrong credentials', 'error')
+      return null
     }
   }
 
@@ -56,8 +58,10 @@ const App = () => {
       await blogService.create(blogObj)
       setBlogs(blogs.concat(blogObj)) // Update the state with the new list of blogs
       showNotification(`Succesfully added "${blogObj.title}" by ${blogObj.author}`, 'success')
+      return true
     } catch (exception) {
       showNotification('Adding Blogpost Failed', 'error')
+      return null
     }
   }
 

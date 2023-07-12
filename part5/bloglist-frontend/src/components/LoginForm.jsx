@@ -4,12 +4,13 @@ const LoginForm = ({ handleLogin }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const prepareLogin = (event) => {
+  const prepareLogin = async (event) => {
     event.preventDefault();
     console.log('logging in with', username, password)
-    handleLogin(username, password)
-    setUsername('')
-    setPassword('')
+    if (await handleLogin(username, password)) {
+      setUsername('')
+      setPassword('')
+    }
   }
 
   return (

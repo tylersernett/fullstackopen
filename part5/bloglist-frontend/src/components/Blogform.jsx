@@ -6,8 +6,9 @@ const Blogform = ({ createBlog }) => {
   const addBlog = async (event) => {
     event.preventDefault()
     console.log('creating newblog:', newBlog)
-    createBlog(newBlog)
-    setNewBlog({ title: '', author: '', url: '' }) // Reset the newBlog state
+    if (await createBlog(newBlog)) {
+      setNewBlog({ title: '', author: '', url: '' }) // Reset the newBlog state
+    }
   }
 
   const { title, url, author } = newBlog
