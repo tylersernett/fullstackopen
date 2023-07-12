@@ -13,12 +13,14 @@ const Blog = ({ blog, handleLike, handleDelete, loggedInUser }) => {
 
   const prepareLike = () => {
     //don't send the entire user OBJECT: just send the user.id
-    const updatedBlog = {...blog, likes: likes+1, user:user.id}
+    const updatedBlog = { ...blog, likes: likes + 1, user: user.id }
     handleLike(blog.id, updatedBlog)
   }
 
   const prepareDelete = () => {
-    handleDelete(blog.id)
+    if (window.confirm(`Are you sure you want to delete ${title} by ${author}?`)) {
+      handleDelete(blog.id)
+    }
   }
 
   return (
@@ -31,7 +33,7 @@ const Blog = ({ blog, handleLike, handleDelete, loggedInUser }) => {
           <div>{url}</div>
           <div>likes: {likes} <button onClick={() => prepareLike()}>like</button></div>
           <div>{user.name}</div>
-          {user.username === loggedInUser.username && <div><button onClick={()=> prepareDelete()}>remove</button></div> }
+          {user.username === loggedInUser.username && <div><button onClick={() => prepareDelete()}>remove</button></div>}
         </>
       }
     </div>
