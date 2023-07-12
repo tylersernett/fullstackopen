@@ -73,6 +73,15 @@ const App = () => {
     }
   }
 
+  const handleDelete = async (id) => {
+    try {
+      await blogService.remove(id)
+      fetchAndUpdateBlogs();
+    } catch {
+      showNotification('Delete Failed', 'error')
+    }
+  }
+
   const createBlog = async (blogObj) => {
     try {
       await blogService.create(blogObj)
@@ -103,7 +112,7 @@ const App = () => {
           <h2>blogs</h2>
           {blogs
             .sort((a, b) => b.likes - a.likes) // Sort the blogs array based on likes in descending order
-            .map(blog => <Blog key={blog.id} blog={blog} handleLike={handleLike} />)
+            .map(blog => <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} loggedInUser={user} />)
           }
         </>
       }
