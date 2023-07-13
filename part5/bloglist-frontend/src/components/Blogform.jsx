@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blogform = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })

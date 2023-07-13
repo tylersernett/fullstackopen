@@ -9,8 +9,8 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
+  const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState(null)
   const blogformRef = useRef()
 
   useEffect(() => {
@@ -28,12 +28,12 @@ const App = () => {
     }
   }, [])
 
-  let notificationTimeout = null;
+  let notificationTimeout = null
   const showNotification = (text, type) => {
-    clearTimeout(notificationTimeout);
-    setNotification({ text, type });
-    notificationTimeout = setTimeout(() => setNotification(null), 5000);
-  };
+    clearTimeout(notificationTimeout)
+    setNotification({ text, type })
+    notificationTimeout = setTimeout(() => setNotification(null), 5000)
+  }
 
   const fetchAndUpdateBlogs = async () => {
     try {
@@ -44,7 +44,7 @@ const App = () => {
     } catch (error) {
       showNotification('Fetching Blogs Failed', 'error')
     }
-  };
+  }
 
   const handleLogin = async (username, password) => {
     try {
@@ -60,15 +60,15 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    setUser(null);
+    setUser(null)
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
   const handleLike = async (id, blogObj) => {
     try {
       await blogService.update(id, blogObj)
-      fetchAndUpdateBlogs();
-    } catch {
+      fetchAndUpdateBlogs()
+    } catch (exception) {
       showNotification('Like Failed', 'error')
     }
   }
@@ -76,8 +76,8 @@ const App = () => {
   const handleDelete = async (id) => {
     try {
       await blogService.remove(id)
-      fetchAndUpdateBlogs();
-    } catch {
+      fetchAndUpdateBlogs()
+    } catch (exception) {
       showNotification('Delete Failed', 'error')
     }
   }
@@ -86,7 +86,7 @@ const App = () => {
     try {
       await blogService.create(blogObj)
       blogformRef.current.toggleVisibility()
-      await fetchAndUpdateBlogs();
+      await fetchAndUpdateBlogs()
       showNotification(`Succesfully added "${blogObj.title}" by ${blogObj.author}`, 'success')
       return true
     } catch (exception) {
