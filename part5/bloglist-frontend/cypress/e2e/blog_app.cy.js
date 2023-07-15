@@ -30,7 +30,7 @@ describe('Blog app', function () {
       cy.contains('Blab Blabby logged in')
     })
 
-    it.only('fails with wrong credentials', function () {
+    it('fails with wrong credentials', function () {
       cy.get('#username').type('newuser')
       cy.get('#password').type('badpassword')
       cy.get('#login-button').click()
@@ -46,9 +46,7 @@ describe('Blog app', function () {
 
   describe('When logged in', function () {
     beforeEach(function () {
-      cy.get('#username').type('newuser')
-      cy.get('#password').type('bbbbbb')
-      cy.get('#login-button').click()
+      cy.login({ username: 'newuser', password: 'bbbbbb' })
     })
 
     it('A blog can be created', function () {
