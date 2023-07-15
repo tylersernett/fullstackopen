@@ -30,8 +30,17 @@ describe('Blog app', function () {
       cy.contains('Blab Blabby logged in')
     })
 
-    it('fails with wrong credentials', function () {
-      // ...
+    it.only('fails with wrong credentials', function () {
+      cy.get('#username').type('newuser')
+      cy.get('#password').type('badpassword')
+      cy.get('#login-button').click()
+
+      cy.get('.error')
+        .should('contain', 'Wrong credentials')
+        .and('have.css', 'color', 'rgb(255, 0, 0)') //Cypress requires the colors to be given as rgb.
+        .and('have.css', 'border-style', 'solid')
+
+      cy.get('html').should('not.contain', 'Blab Blabby logged in')
     })
   })
 
