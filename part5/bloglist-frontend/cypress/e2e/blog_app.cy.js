@@ -1,6 +1,7 @@
 describe('Blog app', function () {
   beforeEach(function () {
     cy.visit('http://localhost:3000')
+    //initialize db with 1 user and 0 blogs
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
     const user = {
       name: 'Blab Blabby',
@@ -61,11 +62,7 @@ describe('Blog app', function () {
 
     describe('and a blog exists', function () {
       beforeEach(function () {
-        cy.contains('new blog').click()
-        cy.get('.blogform-title').type('test blog')
-        cy.get('.blogform-author').type('Testy Test')
-        cy.get('.blogform-url').type('test.com')
-        cy.contains('create').click()
+        cy.createBlog({ title: 'test blog', author: 'Testy Test', url: 'test.com' })
       })
 
       it('its likes can be increased', function () {
