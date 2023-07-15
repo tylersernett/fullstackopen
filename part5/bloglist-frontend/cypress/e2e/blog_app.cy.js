@@ -99,7 +99,7 @@ describe('Blog app', function () {
         cy.get('html').should('not.contain', 'test blog - Testy Test')
       })
 
-      it.only('it cannot be deleted by a non-creator', function () {
+      it('it cannot be deleted by a non-creator', function () {
         cy.contains('logout').click()
 
         cy.login({ username: 'user2', password: 'bbbbbb' })
@@ -110,8 +110,64 @@ describe('Blog app', function () {
 
         cy.contains('remove').should('not.exist')
       })
-
     })
+
+    describe('and multiple blogs exist', function () {
+      beforeEach(function () {
+        cy.createBlog({ title: 'a', author: 'T Test', url: 'test.com', likes: 1 })
+        cy.createBlog({ title: 'b', author: 'T Test', url: 'test.com', likes: 10 })
+        cy.createBlog({ title: 'c', author: 'T Test', url: 'test.com', likes: 2 })
+        cy.createBlog({ title: 'd', author: 'T Test', url: 'test.com', likes: 9 })
+      })
+
+      it('it should be ordered by descending # of likes', function () {
+        cy.get('.blog').eq(0).should('contain', 'b')
+        cy.get('.blog').eq(1).should('contain', 'd')
+        cy.get('.blog').eq(2).should('contain', 'c')
+        cy.get('.blog').eq(3).should('contain', 'a')
+      })
+
+      it('should update order when another post is liked', function () {
+        cy.contains('d - T Test')
+          .contains('view')
+          .click()
+
+        cy.contains('d - T Test')
+          .contains('like').as('dLikeButton')
+
+        cy.get('@dLikeButton').click()
+
+        cy.contains('d - T Test')
+          .contains('likes: 10')
+
+        cy.get('@dLikeButton').click()
+
+        cy.get('.blog').eq(0).should('contain', 'd')
+        cy.get('.blog').eq(1).should('contain', 'b')
+        cy.get('.blog').eq(2).should('contain', 'c')
+        cy.get('.blog').eq(3).should('contain', 'a')
+
+        cy.contains('a - T Test')
+          .contains('view')
+          .click()
+
+        cy.contains('a - T Test')
+          .contains('like').as('aLikeButton')
+
+        cy.get('@aLikeButton').click()
+
+        cy.contains('a - T Test')
+          .contains('likes: 2')
+
+        cy.get('@aLikeButton').click()
+
+        cy.get('.blog').eq(0).should('contain', 'd')
+        cy.get('.blog').eq(1).should('contain', 'b')
+        cy.get('.blog').eq(2).should('contain', 'a')
+        cy.get('.blog').eq(3).should('contain', 'c')
+      })
+    })
+
   })
 
 })
