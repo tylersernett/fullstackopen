@@ -6,27 +6,27 @@ const baseStyle = {
   borderWidth: '3px',
   padding: '10px',
   marginBottom: '10px',
-};
+}
 
 const success = {
   ...baseStyle,
   color: 'green',
-};
+}
 
 const error = {
   ...baseStyle,
   color: 'red',
-};
+}
 
 const Notification = ({ notification }) => {
   if (notification === null) {
     return null
   }
 
-  const style = notification.type === 'success' ? success : error;
+  const style = notification.type === 'success' ? success : error
 
   return (
-    <div style={style}>
+    <div style={style} className={notification.type}>
       {notification.text}
     </div>
   )

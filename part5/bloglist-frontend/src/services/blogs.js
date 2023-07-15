@@ -24,10 +24,9 @@ const update = (id, newObject) => {
 }
 
 const remove = (id) => {
-  const config = { headers: { Authorization: token }, }
+  const config = { headers: { Authorization: token }, } //jwt required
   const request = axios.delete(`${baseUrl}/${id}`, config)
   return request.then(response => response.data)
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, create, update, remove, setToken }

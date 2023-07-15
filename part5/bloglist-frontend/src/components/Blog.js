@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, handleLike, handleDelete, loggedInUser }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const { title, author, url, likes, user } = blog;
+  const [showDetails, setShowDetails] = useState(false)
+  const { title, author, url, likes, user } = blog
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -24,17 +24,17 @@ const Blog = ({ blog, handleLike, handleDelete, loggedInUser }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      {title} - {author}<button onClick={() => setShowDetails(!showDetails)}>
-        {showDetails ? "hide" : "view"}
+    <div style={blogStyle} className='blog'>
+      {title} - {author}<button className='blog-view' onClick={() => setShowDetails(!showDetails)}>
+        {showDetails ? 'hide' : 'view'}
       </button>
       {showDetails &&
-        <>
+        <div className='blog-details'>
           <div>{url}</div>
-          <div>likes: {likes} <button onClick={() => prepareLike()}>like</button></div>
+          <div>likes: {likes} <button className='like-button' onClick={() => prepareLike()}>like</button></div>
           <div>{user.name}</div>
           {user.username === loggedInUser.username && <div><button onClick={() => prepareDelete()}>remove</button></div>}
-        </>
+        </div>
       }
     </div>
   )
