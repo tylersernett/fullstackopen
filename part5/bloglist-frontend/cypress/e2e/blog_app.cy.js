@@ -1,14 +1,20 @@
 describe('Blog app', function () {
   beforeEach(function () {
-    cy.visit('http://localhost:3000')
-    //initialize db with 1 user and 0 blogs
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    //initialize db with 2 users and 0 blogs
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
       name: 'Blab Blabby',
       username: 'newuser',
       password: 'bbbbbb'
     }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
+    const user2 = {
+      name: 'User 2',
+      username: 'user2',
+      password: 'bbbbbb'
+    }
+    cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user2)
+    cy.visit('')
   })
 
   it('front page can be opened', function () {
@@ -79,6 +85,30 @@ describe('Blog app', function () {
 
         cy.contains('test blog - Testy Test')
           .contains('likes: 1')
+      })
+
+      it('it can be deleted by the creator', function () {
+        cy.contains('test blog - Testy Test')
+          .contains('view')
+          .click()
+
+        cy.contains('test blog - Testy Test')
+          .contains('remove')
+          .click()
+
+        cy.get('html').should('not.contain', 'test blog - Testy Test')
+      })
+
+      it.only('it cannot be deleted by a non-creator', function () {
+        cy.contains('logout').click()
+
+        cy.login({ username: 'user2', password: 'bbbbbb' })
+
+        cy.contains('test blog - Testy Test')
+          .contains('view')
+          .click()
+
+        cy.contains('remove').should('not.exist')
       })
 
     })
