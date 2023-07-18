@@ -8,6 +8,7 @@ const App = () => {
 
   const vote = (id) => {
     console.log('vote', id)
+    dispatch(increaseVoteOf(id))
   }
 
   const addAnecdote = (event) => {
