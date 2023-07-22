@@ -21,9 +21,6 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const generateId = () =>
-  Number((Math.random() * 1000000).toFixed(0))
-
 const anecdoteSlice = createSlice({
   name: 'anecdotes', //default way of defining action.type prefix, e.g. type: "anecdotes/createAnecdote"
   initialState,
@@ -34,7 +31,7 @@ const anecdoteSlice = createSlice({
       state.push({
         content,
         votes: 0,
-        id: generateId(),
+        id: getId(),
       })
     },
     increaseVoteOf(state, action) {
