@@ -19,7 +19,8 @@ const AnecdoteList = () => {
 
   return (
     <div>
-      {anecdotes
+      {/* spread anecdotes to avoid mutating state directly */}
+      {[...anecdotes] 
         .sort((a, b) => b.votes - a.votes)
         .map(anecdote =>
           <div key={anecdote.id}>
