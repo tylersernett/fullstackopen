@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { increaseVoteOf } from '../reducers/anecdoteReducer'
+import { voteForAnecdote } from '../reducers/anecdoteReducer'
 import { createNotification, removeNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
@@ -15,10 +15,10 @@ const AnecdoteList = () => {
 
   const vote = (id, content) => {
     console.log('vote', id)
+    dispatch(voteForAnecdote(id))
     if (content.length > 40) {
       content = content.slice(0, 40) + '...'
     }
-    dispatch(increaseVoteOf(id))
     dispatch(createNotification(`Voted for ${content}`))
     setTimeout(() => {
       dispatch(removeNotification())
