@@ -1,13 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import anecdoteService from '../services/anecdotes'
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes', //default way of defining action.type prefix, e.g. type: "anecdotes/createAnecdote"
   initialState: [],
   reducers: {
-    createAnecdote(state, action) {
-      //mutation is okay with redux toolkit (immer library):
-      state.push(action.payload);
-    },
     increaseVoteOf(state, action) {
       const id = action.payload
       const anecdoteToChange = state.find(n => n.id === id)
@@ -28,6 +25,20 @@ const anecdoteSlice = createSlice({
   }
 })
 
+export const { increaseVoteOf, appendAnecdote, setAnecdotes } = anecdoteSlice.actions
 
-export const { createAnecdote, increaseVoteOf, appendAnecdote, setAnecdotes } = anecdoteSlice.actions
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = content => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch(appendAnecdote(newAnecdote))
+  }
+}
+
 export default anecdoteSlice.reducer
