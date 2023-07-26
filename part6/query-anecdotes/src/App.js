@@ -1,5 +1,5 @@
-import { useQuery } from 'react-query'
-import { getAnecdotes } from './requests'
+import { useQuery, useMutation } from 'react-query'
+import { getAnecdotes, createAnecdote } from './requests'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
@@ -9,15 +9,20 @@ const App = () => {
     console.log('vote')
   }
 
-  const anecdotesInit = [
-    {
-      "content": "If it hurts, do it more often",
-      "id": "47145",
-      "votes": 0
-    },
-  ]
+  // const anecdotesInit = [
+  //   {
+  //     "content": "If it hurts, do it more often",
+  //     "id": "47145",
+  //     "votes": 0
+  //   },
+  // ]
 
   const result = useQuery('anecdotes', getAnecdotes)
+  if (result.isLoading) {
+    return <div>loading data...</div>
+  }
+
+  const anecdotes = result.data
 
   return (
     <div>
@@ -26,7 +31,7 @@ const App = () => {
       <Notification />
       <AnecdoteForm />
 
-      {anecdotesInit.map(anecdote =>
+      {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
