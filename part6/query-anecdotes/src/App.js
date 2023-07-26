@@ -7,20 +7,21 @@ const App = () => {
   const queryClient = useQueryClient()
 
   const updateAnecdoteMutation = useMutation(updateAnecdote, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('anecdotes')
+    onSuccess: (updatedAnecdote) => {
+      const anecdotes = queryClient.getQueryData('anecdotes')
+      queryClient.setQueryData('anecdotes', anecdotes.map(anecdote => anecdote.id === updatedAnecdote.id ? updatedAnecdote : anecdote))
     }
   })
   const handleVote = (anecdote) => {
     console.log('vote')
-    updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes+1 })
+    updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
   }
 
   const result = useQuery('anecdotes', getAnecdotes)
   if (result.isLoading) {
     return <div>loading data...</div>
   }
-  if (result.isError){
+  if (result.isError) {
     return <div>anecdote service not available due to problems with server</div>
 
   }
