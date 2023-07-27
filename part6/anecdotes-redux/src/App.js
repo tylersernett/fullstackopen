@@ -1,4 +1,4 @@
-//part 6 hours:  2 + 1 + 3
+//part 6 hours:  2 + 1 + 3 + 2 + 2
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import VisibilityFilter from './components/VisibilityFilter'
