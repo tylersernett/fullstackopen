@@ -20,13 +20,16 @@ const Menu = () => {
 }
 
 const Anecdote = ({ anecdote }) => {
-  console.log(anecdote)
+  const { content, author, votes, info } = anecdote
+  
   return (
-    <li  >
-      <Link to={`/anecdotes/${anecdote.id}`}>
-        {anecdote.content}
-      </Link>
-    </li>
+    <>
+      <h2  >
+        {content} by {author}
+      </h2>
+      <p>has {votes} votes</p>
+      <p>for more info see <Link to={`${info}`}>{info}</Link></p>
+    </>
   )
 }
 
@@ -34,8 +37,13 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <Anecdote anecdote={anecdote} key={anecdote.id} />)
-      }
+      {anecdotes.map(anecdote =>
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>
+            {anecdote.content}
+          </Link>
+        </li>
+      )}
     </ul>
   </div>
 )
