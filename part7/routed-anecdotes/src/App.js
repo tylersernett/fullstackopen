@@ -1,15 +1,9 @@
 //hours: 1
 import { useState, useEffect } from 'react'
-import {
-  BrowserRouter as Router,
-  Routes, Route, Link, useMatch, useNavigate
-} from 'react-router-dom'
+import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
 import { useField } from './hooks'
 
 const Menu = () => {
-  const padding = {
-    paddingRight: 5
-  }
   return (
     <div>
       <Link to="/">anecdotes</Link>
