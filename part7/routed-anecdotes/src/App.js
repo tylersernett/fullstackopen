@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, useMatch
+  Routes, Route, Link, useMatch, useNavigate
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -21,7 +21,7 @@ const Menu = () => {
 
 const Anecdote = ({ anecdote }) => {
   const { content, author, votes, info } = anecdote
-  
+
   return (
     <>
       <h2  >
@@ -74,7 +74,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -84,6 +84,8 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
+    props.setNotification(`New anecdote "${content}" created!`)
   }
 
   return (
@@ -109,6 +111,23 @@ const CreateNew = (props) => {
 
 }
 
+const Notification = ({ notification }) => {
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+    marginBottom: 5
+  }
+
+  if (notification === '') return null
+
+  return (
+    <div style={style}>
+      {notification}
+    </div>
+  )
+}
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -128,6 +147,15 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  useEffect(() => {
+    if (notification !== '') {
+      const timer = setTimeout(() => {
+        setNotification('');
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   const match = useMatch('/anecdotes/:id')
   const anecdote = match
@@ -157,12 +185,13 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification}/>
 
       <Routes>
         <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
-        <Route path="/create" element={<CreateNew />} />
+        <Route path="/create" element={<CreateNew addNew={addNew} setNotification={setNotification} />} />
       </Routes>
 
       <Footer />
