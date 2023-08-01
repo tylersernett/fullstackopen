@@ -1,4 +1,4 @@
-//hours spent: 1.5 
+//hours spent: 1.5 + 2
 
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
