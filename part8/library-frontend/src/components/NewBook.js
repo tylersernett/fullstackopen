@@ -10,7 +10,11 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }] //update other views
+    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }], //update other views
+    onError: (error) => {      
+      const messages = error.graphQLErrors[0].message      
+      console.error('Error creating book: ', messages) 
+    }
   })
 
   if (!props.show) {
