@@ -1,3 +1,5 @@
+//hours spent: 1.5 
+
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
@@ -116,6 +118,8 @@ const typeDefs = `
       published: Int!
       genres: [String!]!
     ): Book
+
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
@@ -163,6 +167,15 @@ const resolvers = {
       books = books.concat(newBook);
 
       return newBook;
+    },
+    editAuthor: (root, { name, setBornTo }) => {
+      // Find the author in the authors array by name
+      const author = authors.find(author => author.name === name);
+      if (!author) { return null }
+
+      const updatedAuthor = { ...author, born: setBornTo }
+      authors = authors.map(a => a.name === name ? updatedAuthor : a)
+      return updatedAuthor
     },
   },
 }
