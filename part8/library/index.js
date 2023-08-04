@@ -248,6 +248,9 @@ const server = new ApolloServer({
 
     return {}
   },
+  cors: {
+    origin: '*'
+  }
 })
 
 startStandaloneServer(server, {
