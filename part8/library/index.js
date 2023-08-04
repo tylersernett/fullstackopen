@@ -168,37 +168,58 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: (root, args) => {
-      const { author } = args
-      // Check if the author already exists
-      let existingAuthor = authors.find(a => a.name === author);
+    addBook: async (root, args) => {
+      try {
+        let existingAuthor = await Author.findOne({ name: args.author })
+        if (!existingAuthor) {
+          const newAuthor = new Author({
+            name: args.author,
+            born: null,
+          });
+          existingAuthor = await newAuthor.save()
+        }
 
-      if (!existingAuthor) {
-        // If the author does not exist, create a new one
-        existingAuthor = {
-          name: author,
-          born: null,
-        };
-        authors = authors.concat(existingAuthor);
+        const newBook = new Book({
+          ...args,
+          author: existingAuthor._id, // Use the ObjectId of the existingAuthor, NOT THE NAME
+        });
+
+        await newBook.save()
+        return newBook;
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error,
+          },
+        });
       }
-
-      // Create the new book
-      const newBook = {
-        ...args,
-        id: uuid()
-      };
-      books = books.concat(newBook);
-
-      return newBook;
     },
-    editAuthor: (root, { name, setBornTo }) => {
-      // Find the author in the authors array by name
-      const author = authors.find(author => author.name === name);
-      if (!author) { return null }
+    editAuthor: async (root, { name, setBornTo }) => {
+      try {
+        const updatedAuthor = await Author.findOneAndUpdate(
+          { name: name },
+          { $set: { born: setBornTo } },
+          { new: true } // Return the updated document
+        );
 
-      const updatedAuthor = { ...author, born: setBornTo }
-      authors = authors.map(a => a.name === name ? updatedAuthor : a)
-      return updatedAuthor
+        if (!updatedAuthor) {
+          return null
+        }
+
+        console.log(updatedAuthor)
+        return updatedAuthor
+
+      } catch (error) {
+        throw new GraphQLError('Editing author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: name,
+            error
+          }
+        })
+      }
     },
   },
 }
@@ -211,5 +232,5 @@ const server = new ApolloServer({
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`)
+  console.log(`Apollo server ready at ${url}`)
 })
