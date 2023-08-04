@@ -1,39 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { LOGIN_MUTATION } from '../queries'
 
 
-const Login = () => {
+const Login = ({ show, setToken }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [login, { loading, error }] = useMutation(LOGIN_MUTATION)
+  const [login, result] = useMutation(LOGIN_MUTATION, {
+    onError: (error) => {
+      console.error(error.graphQLErrors[0].message)
+    }
+  })
+
+  useEffect(() => {
+    if (result.data) {
+      const token = result.data.login.value
+      setToken(token)
+      localStorage.setItem('loggedLibraryAppUser', token)
+    }
+  }, [result.data]) // eslint-disable-line
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
-      const { data } = await login({
-        variables: {
-          username,
-          password,
-        },
-      })
-
-      // Assuming the login mutation returns a token value
-      const token = data.login.value
-      // You can save the token in localStorage or a state management tool like Redux
-      console.log('Token:', token)
-
-      // Redirect to a protected route or perform any other action after successful login
-      window.localStorage.setItem('loggedLibraryAppUser', JSON.stringify(data.user))
-      // blogService.setToken(user.token)
-      // setUser(user)
-      // return user
+      await login({ variables: { username, password } })
     } catch (error) {
       console.error('Login error:', error.message)
     }
   }
-
+  if (!show) {
+    return null
+  }
   return (
     <div>
       <h2>Login</h2>
@@ -56,10 +54,11 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button type="submit" disabled={loading}>
+         <button type="submit" >login</button>
+         {/* disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
-        </button>
-        {error && <div>Error: {error.message}</div>}
+        
+        {error && <div>Error: {error.message}</div>} */}
       </form>
     </div>
   )
