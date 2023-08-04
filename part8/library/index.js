@@ -169,6 +169,9 @@ const resolvers = {
       return { value: token };
     },
     addBook: async (root, args) => {
+      if (!context.currentUser) {
+        throw new GraphQLError('Authentication required for this operation')
+      }
       try {
         let existingAuthor = await Author.findOne({ name: args.author })
         if (!existingAuthor) {
@@ -197,6 +200,9 @@ const resolvers = {
       }
     },
     editAuthor: async (root, { name, setBornTo }) => {
+      if (!context.currentUser) {
+        throw new GraphQLError('Authentication required for this operation')
+      }
       try {
         const updatedAuthor = await Author.findOneAndUpdate(
           { name: name },
@@ -227,6 +233,21 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const authHeader = req ? req.headers.authorization : null
+    if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+      const token = authHeader.substring(7)
+      try {
+        const decodedToken = jwt.verify(token, JWT_SECRET)
+        const currentUser = await User.findById(decodedToken.id)
+        return { currentUser }
+      } catch (error) {
+        throw new GraphQLError('Invalid or expired token')
+      }
+    }
+
+    return {}
+  },
 })
 
 startStandaloneServer(server, {
