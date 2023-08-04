@@ -4,15 +4,19 @@ const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { GraphQLError } = require('graphql')
 const { v1: uuid } = require('uuid')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Author = require('./models/author')
 const Book = require('./models/book')
+const User = require('./models/user')
 
 require('dotenv').config()
 
 const MONGODB_URI = process.env.MONGODB_URI
+const JWT_SECRET = process.env.SECRET
 
 console.log('connecting to mongoDB')
 
@@ -49,11 +53,22 @@ const typeDefs = `
     id: ID!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
 
   type Mutation {
@@ -65,6 +80,9 @@ const typeDefs = `
     ): Book
 
     editAuthor(name: String!, setBornTo: Int!): Author
+
+    createUser(username: String!, favoriteGenre: String!): User
+    login(username: String!, password: String!): Token
   }
 `
 
@@ -99,8 +117,57 @@ const resolvers = {
         bookCount: books.filter(book => book.author.equals(author._id)).length,
       }));
     },
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
   },
   Mutation: {
+    createUser: async (root, args) => {
+      const { username, favoriteGenre } = args;
+
+      const passwordHash = await bcrypt.hash('password', 10);
+
+      const user = new User({
+        username,
+        favoriteGenre,
+        passwordHash,
+      });
+
+      try {
+        await user.save();
+        return user;
+      } catch (error) {
+        throw new GraphQLError('Creating user failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: username,
+            error,
+          },
+        });
+      }
+    },
+
+    login: async (root, args) => {
+      const { username, password } = args;
+
+      const user = await User.findOne({ username });
+      const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(password, user.passwordHash);
+
+      if (!(user && passwordCorrect)) {
+        throw new GraphQLError('Invalid username or password');
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      const token = jwt.sign(userForToken, JWT_SECRET);
+
+      return { value: token };
+    },
     addBook: async (root, args) => {
       try {
         let existingAuthor = await Author.findOne({ name: args.author })
