@@ -1,4 +1,4 @@
-//hours spent: 1.5 + 2 + 2.5
+//hours spent: 1.5 + 2 + 2.5 + 2 + 1
 
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
@@ -66,7 +66,7 @@ const typeDefs = `
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String, genre: String): [Book!]!
+    allBooks(author: String, genres: String): [Book!]!
     allAuthors: [Author!]!
     me: User
   }
