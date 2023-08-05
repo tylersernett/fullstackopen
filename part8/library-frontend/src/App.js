@@ -13,16 +13,13 @@ const App = () => {
   const resultBooks = useQuery(ALL_BOOKS)
   const client = useApolloClient()
 
-  if (resultAuthors.loading) {
-    return <div>loading...</div>
-  }
-
-  if (resultBooks.loading) {
+  if (resultAuthors.loading || resultBooks.loading) {
     return <div>loading...</div>
   }
 
   const logout = () => {
     setToken(null)
+    localStorage.removeItem('loggedLibraryAppUser');
     localStorage.clear()
     client.resetStore()
   }
