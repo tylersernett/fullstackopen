@@ -168,7 +168,7 @@ const resolvers = {
 
       return { value: token }
     },
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
       if (!context.currentUser) {
         throw new GraphQLError('Authentication required for this operation')
       }
@@ -199,7 +199,7 @@ const resolvers = {
         })
       }
     },
-    editAuthor: async (root, { name, setBornTo }) => {
+    editAuthor: async (root, { name, setBornTo }, context) => {
       if (!context.currentUser) {
         throw new GraphQLError('Authentication required for this operation')
       }
