@@ -31,10 +31,6 @@ mutation createBook($title: String!, $author: String!, $published: Int!, $genres
     genres: $genres
   ) {
     title
-    genres
-    id
-    author
-    published
     }
   }
 `
@@ -50,7 +46,7 @@ mutation updateAuthor($name: String!, $setBornTo: Int!) {
   }
 }`
 
-export const LOGIN_MUTATION = gql`
+export const LOGIN = gql`
 mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
     value
