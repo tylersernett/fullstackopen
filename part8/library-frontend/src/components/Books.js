@@ -1,10 +1,11 @@
 import { useLazyQuery } from "@apollo/client"
 import { useState } from "react"
 import { SOME_BOOKS } from "../queries"
+import FilteredBooks from './FilteredBooks'
 
 const Books = (props) => {
   const [genreFilter, setGenreFilter] = useState('all')
-  const [getSomeBooks, { loading, data }] = useLazyQuery(SOME_BOOKS) // Use useLazyQuery
+  const [getSomeBooks, { loading, data }] = useLazyQuery(SOME_BOOKS) // Use useLazyQuery for user filtering
 
   if (!props.show) {
     return null
@@ -26,7 +27,7 @@ const Books = (props) => {
     ? genreFilter === 'all' ? books : data.allBooks.filter((book) => book.genres.includes(genreFilter))
     : books;
 
-  const handleClick = async (genre) => {
+  const handleClick = (genre) => {
     getSomeBooks({ variables: { genres: genre } })
     setGenreFilter(genre)
   }
@@ -34,24 +35,11 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
+      <p>
+        in genre <b>{genreFilter}</b>
+      </p>
 
-      <table>
-        <tbody>
-          <tr>
-            <th>title</th>
-            <th>author</th>
-            <th>published</th>
-          </tr>
-          {loading ? <tr><td>loading...</td></tr> :
-            filteredBooks.map((book) => (
-              <tr key={book.title}>
-                <td>{book.title}</td>
-                <td>{book.author.name}</td>
-                <td>{book.published}</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      <FilteredBooks loading={loading} filteredBooks={filteredBooks}/>
 
       {uniqueGenres.map((genre) => (
         <button
