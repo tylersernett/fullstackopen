@@ -16,14 +16,15 @@ const Books = (props) => {
     books.forEach((book) => {
       book.genres.forEach((genre) => genresSet.add(genre))
     })
+    genresSet.add('all')
     return Array.from(genresSet) //return Array here so Array.map can be used below
   }
 
   const uniqueGenres = getUniqueGenres()
 
   const filteredBooks = data
-    ? data.allBooks.filter((book) => genreFilter === 'all' || book.genres.includes(genreFilter))
-    : books
+    ? genreFilter === 'all' ? books : data.allBooks.filter((book) => book.genres.includes(genreFilter))
+    : books;
 
   const handleClick = async (genre) => {
     getSomeBooks({ variables: { genres: genre } })
@@ -37,11 +38,11 @@ const Books = (props) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>title</th>
             <th>author</th>
             <th>published</th>
           </tr>
-          {loading ? <div>loading...</div> :
+          {loading ? <tr><td>loading...</td></tr> :
             filteredBooks.map((book) => (
               <tr key={book.title}>
                 <td>{book.title}</td>
