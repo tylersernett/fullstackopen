@@ -233,28 +233,21 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async ({ req }) => {
-    const authHeader = req ? req.headers.authorization : null
-    if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
-      const token = authHeader.substring(7)
-      try {
-        const decodedToken = jwt.verify(token, JWT_SECRET)
-        const currentUser = await User.findById(decodedToken.id)
-        return { currentUser }
-      } catch (error) {
-        throw new GraphQLError('Invalid or expired token')
-      }
-    }
-
-    return {}
-  },
-  cors: {
-    origin: '*'
-  }
 })
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null
+    if (auth && auth.startsWith('Bearer ')) {
+      const decodedToken = jwt.verify(
+        auth.substring(7), JWT_SECRET
+      )
+      const currentUser = await User
+        .findById(decodedToken.id) 
+      return { currentUser }
+    }
+  },
 }).then(({ url }) => {
-  console.log(`Apollo server ready at ${url}`)
+  console.log(` Apollo server ready at ${url}`)
 })
