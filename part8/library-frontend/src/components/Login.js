@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
-import { LOGIN_MUTATION } from '../queries'
+import { LOGIN } from '../queries'
 
 
 const Login = ({ show, setToken }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [login, result] = useMutation(LOGIN_MUTATION, {
+  const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
       console.error(error.graphQLErrors[0].message)
     }
@@ -15,6 +15,7 @@ const Login = ({ show, setToken }) => {
   useEffect(() => {
     if (result.data) {
       const token = result.data.login.value
+      console.log('token: ', token)
       setToken(token)
       localStorage.setItem('loggedLibraryAppUser', token)
     }
@@ -23,11 +24,11 @@ const Login = ({ show, setToken }) => {
   const handleLogin = async (event) => {
     event.preventDefault()
 
-    try {
-      await login({ variables: { username, password } })
-    } catch (error) {
-      console.error('Login error:', error.message)
-    }
+    login({ variables: { username, password } })
+    // try {
+    // } catch (error) {
+    //   console.error('Login error:', error.message)
+    // }
   }
   if (!show) {
     return null
