@@ -107,11 +107,11 @@ const resolvers = {
 
         const newBook = new Book({
           ...args,
-          author: existingAuthor._id, // Use the ObjectId of the existingAuthor, NOT THE NAME
-        });
+          author: existingAuthor // Use the entire author object
+        })
 
         await newBook.save()
-        pubsub.publish('BOOK_ADDED', {bookAdded: newBook})
+        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
         return newBook
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
