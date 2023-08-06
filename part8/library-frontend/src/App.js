@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -30,6 +30,14 @@ const App = () => {
   const resultUser = useQuery(GET_ME, {
     skip: !token //don't execute query if user not logged in
   })
+
+  //check for existing login
+  useEffect(() => {
+    const token = localStorage.getItem('loggedLibraryAppUser')
+    if (token) {
+      setToken(token)
+    }
+  }, [])
 
   const client = useApolloClient()
 
