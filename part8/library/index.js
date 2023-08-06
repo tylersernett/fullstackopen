@@ -1,4 +1,4 @@
-//hours spent: 1.5 + 2 + 2.5 + 2 + 1
+//hours spent: 1.5 + 2 + 2.5 + 2 + 1 + 2 
 
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
@@ -12,6 +12,7 @@ mongoose.set('strictQuery', false)
 const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
+const typeDefs = require('./schema')
 
 require('dotenv').config()
 
@@ -37,54 +38,7 @@ mongoose.connect(MONGODB_URI)
 //   mongoose.connection.close()
 // })
 
-const typeDefs = `
-  type Book {
-    title: String!
-    author: Author!
-    published: Int!
-    genres: [String!]!
-    id: ID!
-  }
 
-  type Author {
-    name: String!
-    born: Int
-    bookCount: Int!
-    id: ID!
-  }
-
-  type User {
-    username: String!
-    favoriteGenre: String!
-    id: ID!
-  }
-
-  type Token {
-    value: String!
-  }
-
-  type Query {
-    bookCount: Int!
-    authorCount: Int!
-    allBooks(author: String, genres: String): [Book!]!
-    allAuthors: [Author!]!
-    me: User
-  }
-
-  type Mutation {
-    addBook(
-      title: String!
-      author: String!
-      published: Int!
-      genres: [String!]!
-    ): Book
-
-    editAuthor(name: String!, setBornTo: Int!): Author
-
-    createUser(username: String!, favoriteGenre: String!): User
-    login(username: String!, password: String!): Token
-  }
-`
 
 const resolvers = {
   Query: {
