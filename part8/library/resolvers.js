@@ -1,4 +1,6 @@
 const { GraphQLError } = require('graphql')
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const Author = require('./models/author')
@@ -109,6 +111,7 @@ const resolvers = {
         });
 
         await newBook.save()
+        pubsub.publish('BOOK_ADDED', {bookAdded: newBook})
         return newBook
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
@@ -149,6 +152,11 @@ const resolvers = {
       }
     },
   },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED')
+    }
+  }
 }
 
 module.exports = resolvers
