@@ -1,8 +1,11 @@
 const { GraphQLError } = require('graphql')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
+require('dotenv').config()
+const JWT_SECRET = process.env.SECRET
 
 const resolvers = {
   Query: {
