@@ -1,11 +1,26 @@
 import { useState } from 'react'
-import { useQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import Login from './components/Login'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recommendations'
-import { ALL_AUTHORS, ALL_BOOKS, GET_ME } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED, GET_ME } from './queries'
+
+export const updateCacheWith = (client, query, addedBook) => {
+  const includedIn = (set, object) =>
+  set.map(p => p.title).includes(object.title)
+  
+  const dataInStore = client.readQuery({ query: query }) 
+  if (!includedIn(dataInStore.allBooks, addedBook)) {
+    client.writeQuery({
+      query: query,
+      data: {
+        allBooks: [...dataInStore.allBooks, addedBook],
+      },
+    }) 
+  }
+} 
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -18,13 +33,32 @@ const App = () => {
 
   const client = useApolloClient()
 
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      console.log("data", data)
+      const addedBook = data.data.bookAdded
+      updateCacheWith(client, ALL_BOOKS, addedBook, 'allBooks')
+      window.alert(`New book "${addedBook.title}" added`)
+
+      //Update Author view cache:
+      const dataInStore = client.readQuery({ query: ALL_AUTHORS }) 
+      const updatedAuthor = {...addedBook.author, bookCount: addedBook.author.bookCount+1}
+      client.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: dataInStore.allAuthors.map((a)=>a.name===updatedAuthor.name? updatedAuthor : a),
+        },
+      }) 
+    },
+  })
+
   if (resultAuthors.loading || resultBooks.loading) {
     return <div>loading...</div>
   }
 
   const logout = () => {
     setToken(null)
-    localStorage.removeItem('loggedLibraryAppUser');
+    localStorage.removeItem('loggedLibraryAppUser') 
     localStorage.clear()
     client.resetStore()
   }
