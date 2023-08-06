@@ -1,4 +1,4 @@
-//hours spent: 1.5 + 2 + 2.5 + 2 + 1 + 2 
+//hours spent: 1.5 + 2 + 2.5 + 2 + 1 + 2 + 2 + 1 = 14
 
 const { ApolloServer } = require('@apollo/server')
 const { expressMiddleware } = require('@apollo/server/express4')
