@@ -34,11 +34,14 @@ const resolvers = {
     },
     allAuthors: async () => {
       const authors = await Author.find({})
-      const books = await Book.find({})
-      return authors.map(author => ({
-        ...author._doc,
-        bookCount: books.filter(book => book.author.equals(author._id)).length,
-      }))
+      // Fetch the bookCount for each author
+      const authorsWithBookCount = await Promise.all(
+        authors.map(async (author) => {
+          const bookCount = await Book.countDocuments({ author: author._id });
+          return { ...author._doc, bookCount }; // Add the bookCount to the author object
+        })
+      );
+      return authorsWithBookCount;
     },
     me: (root, args, context) => {
       return context.currentUser
