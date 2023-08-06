@@ -37,9 +37,18 @@ const App = () => {
     onData: ({ data, client }) => {
       console.log("data", data)
       const addedBook = data.data.bookAdded
-      // updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
-      updateCacheWith(client, ALL_BOOKS, addedBook)
-      // window.alert(`New book "${addedBook.title}" added`)
+      updateCacheWith(client, ALL_BOOKS, addedBook, 'allBooks')
+      window.alert(`New book "${addedBook.title}" added`)
+
+      //Update Author view cache:
+      const dataInStore = client.readQuery({ query: ALL_AUTHORS }) 
+      const updatedAuthor = {...addedBook.author, bookCount: addedBook.author.bookCount+1}
+      client.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: dataInStore.allAuthors.map((a)=>a.name===updatedAuthor.name? updatedAuthor : a),
+        },
+      }) 
     },
   })
 
