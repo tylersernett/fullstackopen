@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useApolloClient } from '@apollo/client'
-import { CREATE_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries'
+import { CREATE_BOOK, ALL_BOOKS } from '../queries'
 import { updateCacheWith } from '../App'
 
 const NewBook = (props) => {
@@ -11,14 +11,14 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
   const client = useApolloClient()
   const [createBook] = useMutation(CREATE_BOOK, {
-    // refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }], //update other views
+    // refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }], //refetch solution, used before update callback below
     onError: (error) => {      
-      const messages = error.graphQLErrors[0].message      
+      const messages = error?.graphQLErrors[0]?.message      
       console.error('Error creating book: ', messages) 
     },
     update: (cache, response) => {
       updateCacheWith(client, ALL_BOOKS, response.data.addBook)
-      // updateCacheWith(client, ALL_AUTHORS, response.data.addBook.author)
+      // updateCacheWith(client, ALL_AUTHORS, response.data.addBook.author) //updating author view handled by subscription in App.js
     },
   })
 
