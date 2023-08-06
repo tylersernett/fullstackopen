@@ -7,6 +7,21 @@ import NewBook from './components/NewBook'
 import Recommendations from './components/Recommendations'
 import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED, GET_ME } from './queries'
 
+export const updateCacheWith = (client, query, addedBook) => {
+  const includedIn = (set, object) =>
+  set.map(p => p.title).includes(object.title)
+  
+  const dataInStore = client.readQuery({ query: query }) 
+  if (!includedIn(dataInStore.allBooks, addedBook)) {
+    client.writeQuery({
+      query: query,
+      data: {
+        allBooks: [...dataInStore.allBooks, addedBook],
+      },
+    }) 
+  }
+} 
+
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
@@ -19,9 +34,13 @@ const App = () => {
   const client = useApolloClient()
 
   useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
-      console.log('sub:', data)
-    }
+    onData: ({ data, client }) => {
+      console.log("data", data)
+      const addedBook = data.data.bookAdded
+      // updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+      updateCacheWith(client, ALL_BOOKS, addedBook)
+      // window.alert(`New book "${addedBook.title}" added`)
+    },
   })
 
   if (resultAuthors.loading || resultBooks.loading) {
@@ -30,7 +49,7 @@ const App = () => {
 
   const logout = () => {
     setToken(null)
-    localStorage.removeItem('loggedLibraryAppUser');
+    localStorage.removeItem('loggedLibraryAppUser') 
     localStorage.clear()
     client.resetStore()
   }
