@@ -1,3 +1,5 @@
+//hours: 11pm-
+
 import express from 'express';
 import { getBmi } from './bmiCalculator';
 const app = express();
@@ -10,7 +12,7 @@ app.get('/bmi', (req, res) => {
   const height = req.query.height as string;
   const weight = req.query.weight as string;
 
-  const bmiResult = getBmi(height, weight);
+  const bmiResult = getBmi(Number(height), Number(weight));
 
   if ('error' in bmiResult) {
     res.status(400).json({ error: 'malformatted parameters' });

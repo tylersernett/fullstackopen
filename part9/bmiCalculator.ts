@@ -19,19 +19,17 @@ const calculateBmi = (height: number, weight: number): string => {
 //   process.exit(1);
 // }
 
-export const getBmi = (height: string, weight: string): BMIResponse | { error: string } => {
-  const parsedHeight = Number(height);
-  const parsedWeight = Number(weight);
+export const getBmi = (height: number, weight: number): BMIResponse | { error: string } => {
 
-  if (isNaN(parsedHeight) || isNaN(parsedWeight)) {
+  if (isNaN(height) || isNaN(weight)) {
     return { error: 'malformatted parameters' };
   }
 
-  const bmiResult = calculateBmi(parsedHeight, parsedWeight);
+  const bmiResult = calculateBmi(height, weight);
 
   return {
-    weight: parsedWeight,
-    height: parsedHeight,
+    weight: weight,
+    height: height,
     bmi: bmiResult,
   };
 };
