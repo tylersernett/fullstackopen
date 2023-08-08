@@ -5,7 +5,7 @@ interface BMIResponse {
 }
 
 const calculateBmi = (height: number, weight: number): string => {
-  const bmi = weight / (height * height);
+  const bmi = weight / (height/100 * height/100);
   console.log(height, weight, bmi);
 
   if (bmi < 16) return 'Underweight';
