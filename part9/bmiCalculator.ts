@@ -5,14 +5,14 @@ interface BMIResponse {
 }
 
 const calculateBmi = (height: number, weight: number): string => {
-  const bmi = weight / (height * height)
-  console.log(height, weight, bmi)
+  const bmi = weight / (height * height);
+  console.log(height, weight, bmi);
 
-  if (bmi < 16) return 'Underweight'
-  else if (bmi >= 16 && bmi < 25) return 'Normal (healthy weight)'
-  else if (bmi >= 25 && bmi < 30) return 'Overweight'
-  else return 'Obese'
-}
+  if (bmi < 16) return 'Underweight';
+  else if (bmi >= 16 && bmi < 25) return 'Normal (healthy weight)';
+  else if (bmi >= 25 && bmi < 30) return 'Overweight';
+  else return 'Obese';
+};
 
 // if (process.argv.length !== 4) {
 //   console.log("Please provide exactly two arguments: height and weight.");
