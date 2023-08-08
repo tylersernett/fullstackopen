@@ -1,3 +1,9 @@
+interface BMIResponse {
+  weight: number;
+  height: number;
+  bmi: string;
+}
+
 const calculateBmi = (height: number, weight: number): string => {
   const bmi = weight / (height * height)
   console.log(height, weight, bmi)
@@ -8,13 +14,24 @@ const calculateBmi = (height: number, weight: number): string => {
   else return 'Obese'
 }
 
-if (process.argv.length !== 4) {
-  console.log("Please provide exactly two arguments: height and weight.");
-  process.exit(1);
-}
+// if (process.argv.length !== 4) {
+//   console.log("Please provide exactly two arguments: height and weight.");
+//   process.exit(1);
+// }
 
-const height: number = Number(process.argv[2]);
-const weight: number = Number(process.argv[3]);
+export const getBmi = (height: string, weight: string): BMIResponse | { error: string } => {
+  const parsedHeight = Number(height);
+  const parsedWeight = Number(weight);
 
-const bmi = calculateBmi(height, weight);
-console.log(bmi);
+  if (isNaN(parsedHeight) || isNaN(parsedWeight)) {
+    return { error: 'malformatted parameters' };
+  }
+
+  const bmiResult = calculateBmi(parsedHeight, parsedWeight);
+
+  return {
+    weight: parsedWeight,
+    height: parsedHeight,
+    bmi: bmiResult,
+  };
+};
