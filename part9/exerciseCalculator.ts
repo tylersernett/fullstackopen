@@ -36,15 +36,4 @@ const calculateExercises = (exerciseHours: number[], target: number): ExerciseRe
   };
 };
 
-if (process.argv.length < 4) {
-  console.log("Please provide at least two arguments: target and exercise hours.");
-  process.exit(1);
-}
-
-const target: number = Number(process.argv[2]);
-const exerciseHours: number[] = process.argv.slice(3).map(arg => Number(arg));
-
-const result = calculateExercises(exerciseHours, target);
-console.log(result);
-
 export default calculateExercises;
