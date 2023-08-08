@@ -14,3 +14,5 @@ export interface Diagnosis {
   name: string;
   latin?: string;
 }
+
+export type NonSensitivePatient = Omit<Patient, 'ssn'>;
