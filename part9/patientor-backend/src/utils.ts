@@ -1,25 +1,25 @@
 import { NewPatient, Gender } from "./types";
 
-const isString = (text: unknown): text is string => {
-  return typeof text === 'string' || text instanceof String;
+const isNonEmptyString = (text: unknown): text is string => {
+  return (typeof text === 'string' || text instanceof String) && text.trim().length > 0;
 };
 //the typeof operator will return 'string' for primitive string literals but will return 'object' for string objects created using the String constructor (new String('hello')). This is why a second check is necessary.
 //"text is string" predicate: if function returns true, 'text' will be recognized as string in future
 
 const parseName = (name: unknown): string => {
-  if (!isString(name)) {
+  if (!isNonEmptyString(name)) {
     throw new Error('Incorrect or missing name');
   }
   return name;
 };
 const parseOccupation = (occupation: unknown): string => {
-  if (!isString(occupation)) {
+  if (!isNonEmptyString(occupation)) {
     throw new Error('Incorrect or missing occupation');
   }
   return occupation;
 };
 const parseSsn = (ssn: unknown): string => {
-  if (!isString(ssn)) {
+  if (!isNonEmptyString(ssn)) {
     throw new Error('Incorrect or missing ssn');
   }
   return ssn;
@@ -30,7 +30,7 @@ const isDate = (date: string): boolean => {
 };
 
 const parseDateOfBirth = (date: unknown): string => {
-  if (!isString(date) || !isDate(date)) {
+  if (!isNonEmptyString(date) || !isDate(date)) {
     throw new Error('Incorrect or missing date of birth: ' + date);
   }
   return date;
@@ -40,7 +40,7 @@ const isGender = (param: string): param is Gender => {
   return Object.values(Gender).map(v => v.toString()).includes(param);
 };
 const parseGender = (gender: unknown): Gender => {
-  if (!isString(gender) || !isGender(gender)) {
+  if (!isNonEmptyString(gender) || !isGender(gender)) {
     throw new Error('Incorrect or missing gender: ' + gender);
   }
   return gender;
