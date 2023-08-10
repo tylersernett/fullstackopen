@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { NewEntry, Entry } from '../types';
 import axios, { AxiosError } from 'axios';
 
-const DiaryForm = ({ entries, setEntries }: { entries: Entry[], setEntries: (entries: Entry[]) => void }) => {
+const DiaryForm = ({ entries, setEntries }: { entries: Entry[], setEntries: Dispatch<SetStateAction<Entry[]>> }) => {
   const [notification, setNotification] = useState('');
   const [date, setDate] = useState('');
   const [visibility, setVisibility] = useState('');
