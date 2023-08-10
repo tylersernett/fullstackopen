@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
-
-interface Entry {
-  id: number;
-  date: string;
-  weather: string;
-  visibility: string;
-}
+import { Entry } from './types';
+import DiaryEntries from './components/DiaryEntries';
 
 function App() {
   const [entries, setEntries] = useState<Entry[]>();
@@ -32,16 +26,7 @@ function App() {
 
   return (
     <div className="App">
-      <h2>Diary Entries</h2>
-      {entries && entries.map(entry =>
-        <p key={entry.id}>
-          <b>{entry.date}</b>
-          <br/>
-          visibility: {entry.visibility}
-          <br/>
-          weather: {entry.weather}
-        </p>
-      )}
+      <DiaryEntries entries={entries} />
     </div>
   );
 }
