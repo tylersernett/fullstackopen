@@ -9,6 +9,8 @@ const DiaryForm = ({ entries, setEntries }: { entries: Entry[], setEntries: (ent
   const [weather, setWeather] = useState('');
   const [comment, setComment] = useState('');
 
+  const visibilityOptions = ['great', 'good', 'ok', 'poor'];
+  const weatherOptions = ['sunny', 'rainy', 'cloudy', 'stormy', 'windy'];
   //reset notification after 5 seconds
   useEffect(() => {
     if (notification !== '') { //prevent running on initialization
@@ -52,16 +54,36 @@ const DiaryForm = ({ entries, setEntries }: { entries: Entry[], setEntries: (ent
       {notification && <span style={{ color: 'red' }}>Error: {notification}</span>}
       <form onSubmit={(e) => handleSubmit(e)}>
         date
-        <input type='text' onChange={(e) => setDate(e.target.value)}></input>
+        <input type='date' value={date} onChange={(e) => setDate(e.target.value)}></input>
         <br />
         visibility
-        <input type='text' onChange={(e) => setVisibility(e.target.value)}></input>
+        {visibilityOptions.map(option => (
+          <label key={option}>
+            <input
+              type='radio'
+              value={option}
+              checked={visibility === option}
+              onChange={(e) => setVisibility(e.target.value)}
+            />
+            {option}
+          </label>
+        ))}
         <br />
         weather
-        <input type='text' onChange={(e) => setWeather(e.target.value)}></input>
+        {weatherOptions.map(option => (
+          <label key={option}>
+            <input
+              type='radio'
+              value={option}
+              checked={weather === option}
+              onChange={(e) => setWeather(e.target.value)}
+            />
+            {option}
+          </label>
+        ))}
         <br />
         comment
-        <input type='text' onChange={(e) => setComment(e.target.value)}></input>
+        <input type='text' value={comment} onChange={(e) => setComment(e.target.value)}></input>
         <br />
         <button type='submit'>add</button>
       </form>
