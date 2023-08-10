@@ -27,6 +27,16 @@ const Part = ({ part }: { part: CoursePart }) => {
       );
       break;
 
+    case "special":
+      content = (
+        <>
+          <i>{part.description}</i>
+          <br />
+          requirements: {part.requirements.join(", ")}
+        </>
+      );
+      break;
+
     default:
       return assertNever(part);
   }
