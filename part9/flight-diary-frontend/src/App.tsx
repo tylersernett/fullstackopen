@@ -26,6 +26,14 @@ function App() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setNotification('');
+    }, 5000);
+    
+  }, [notification])
+  
+
   if (!entries) {
     return null;
   }
@@ -63,7 +71,7 @@ function App() {
   return (
     <div className="App">
       <h2>Add new entry</h2>
-      {notification && <span>Error: {notification}</span>}
+      {notification && <span style={{color:'red'}}>Error: {notification}</span>}
       <form onSubmit={(e) => handleSubmit(e)}>
         date
         <input type='text' onChange={(e) => setDate(e.target.value)}></input>
