@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import { Entry, NewEntry } from './types';
 import DiaryEntries from './components/DiaryEntries';
 
@@ -42,10 +42,22 @@ function App() {
       // setVisibility('');
       // setWeather('');
       // setComment('');
-    } catch (error: Error | AxiosError) {
+    } catch (error) {
       console.error('Error posting new entry: ', error);
-      setNotification(error)
+      if (isAxiosError(error)) {
+        if (error.response?.data) {
+          setNotification(`An error occurred: ${error.response.data}`);
+        } else {
+          setNotification('An error occurred while adding the entry.');
+        }
+      } else {
+        setNotification('An unknown error occurred while adding the entry.');
+      }
     }
+  }
+
+  function isAxiosError(error: any): error is AxiosError {
+    return error.isAxiosError === true;
   }
 
   return (
