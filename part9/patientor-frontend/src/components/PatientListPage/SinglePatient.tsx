@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import patientService from "../../services/patients";
 import diagnosesService from "../../services/diagnoses"
 import { Patient } from "../../types";
+import EntryDetails from "./EntryDetails";
 
 const SinglePatient = () => {
   const [patient, setPatient] = useState<Patient | null>(null); // Initialize with null or an initial Patient object
@@ -56,16 +57,7 @@ const SinglePatient = () => {
       <br />
       <h3>entries</h3>
       {patient.entries.map((entry) => (
-        <div key={entry.id}>
-          {entry.date}: <i>{entry.description}</i>
-          <ul>
-            {entry.diagnosisCodes?.map(code => (
-              <li key={code}>
-                {code} - {diagnosisNames[code]}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <EntryDetails key={entry.id} entry={entry} diagnosisNames={diagnosisNames} />
       ))}
     </div>
   );
