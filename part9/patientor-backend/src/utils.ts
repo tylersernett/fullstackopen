@@ -119,7 +119,7 @@ function parseSickLeave(sickLeave: unknown): OccupationalHealthcareEntry['sickLe
 }
 
 function parseHealthCheckRating(healthCheckRating: unknown): HealthCheckEntry['healthCheckRating'] {
-  if (!healthCheckRating || typeof healthCheckRating !== 'number') {
+  if (healthCheckRating === undefined || typeof healthCheckRating !== 'number') {
     throw new Error('Invalid health check rating');
   }
   if (healthCheckRating >= 0 && healthCheckRating <= 3) {
