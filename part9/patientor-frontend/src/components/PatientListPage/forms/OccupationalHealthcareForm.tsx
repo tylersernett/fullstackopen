@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import { EntryWithoutId } from "../../../types";
+import CommonForm from "./CommonForm";
 
 interface HealthCheckFormProps {
   onSubmit: (values: EntryWithoutId) => void;
@@ -30,21 +31,7 @@ const OccupationalHealthcareForm: React.FC<HealthCheckFormProps> = ({ onSubmit }
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
-        Description:
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Date:
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Specialist:
-        <input type="text" value={specialist} onChange={(e) => setSpecialist(e.target.value)} />
-      </label>
-      <br />
+      <CommonForm description={description} setDescription={setDescription} date={date} setDate={setDate} specialist={specialist} setSpecialist={setSpecialist}/>
       <label>
         Employer Name:
         <input type="text" value={employerName} onChange={(e) => setEmployerName(e.target.value)} />
