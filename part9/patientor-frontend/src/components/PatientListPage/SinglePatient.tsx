@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react";
+import { AxiosError } from "axios"; // Import the AxiosError type
 import patientService from "../../services/patients";
-import diagnosesService from "../../services/diagnoses"
+import diagnosesService from "../../services/diagnoses";
 import { Patient, Entry, EntryWithoutId, HealthCheckRating, Diagnosis } from "../../types";
 import CommonForm from "./forms/CommonForm";
 import EntryDetails from "./EntryDetails";
@@ -15,6 +16,7 @@ const SinglePatient = () => {
   const [showForm, setShowForm] = useState(false);
   const [diagnosisNames, setDiagnosisNames] = useState<{ [code: string]: string }>({});
   const [diagnosisCodeList, setDiagnosisCodeList] = useState<string[]>([]);
+  const [notification, setNotification] = useState('');
 
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
@@ -69,6 +71,15 @@ const SinglePatient = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //reset notification after 5 seconds
+  useEffect(() => {
+    if (notification !== '') { //prevent running on initialization
+      setTimeout(() => {
+        setNotification('');
+      }, 5000);
+    }
+  }, [notification])
+
   const handleEntryFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // console.log("Submitted entry values:", values);
@@ -110,18 +121,34 @@ const SinglePatient = () => {
         return;
     }
 
-    const updatedEntry = await patientService.createEntry(id, values)
+    try {
+      const updatedEntry = await patientService.createEntry(id, values)
 
-    // Update the patient's entries with the new entry
-    if (patient) {
-      const updatedPatient: Patient = {
-        ...patient,
-        entries: [...patient.entries, updatedEntry],
-      };
-      setPatient(updatedPatient);
+      // Update the patient's entries with the new entry
+      if (patient) {
+        const updatedPatient: Patient = {
+          ...patient,
+          entries: [...patient.entries, updatedEntry],
+        };
+        setPatient(updatedPatient);
+      }
+    } catch (error) {
+      console.error('Error posting new entry: ', error);
+      if (isAxiosError(error)) {
+        if (error.response?.data) {
+          setNotification(`An error occurred: ${error.response.data}`);
+        } else {
+          setNotification('An error occurred while adding the entry.');
+        }
+      } else {
+        setNotification('An unknown error occurred while adding the entry.');
+      }
     }
   };
 
+  function isAxiosError(error: unknown): error is AxiosError {
+    return error instanceof AxiosError;
+  };
 
   if (!patient) {
     return <div>Loading...</div>;
@@ -143,6 +170,7 @@ const SinglePatient = () => {
 
       <div style={{ border: '1px dotted black', padding: '5px' }}>
         <button onClick={() => setShowForm(!showForm)}>{showForm ? "Cancel" : "Add Entry"}</button>
+        {notification && <span style={{ color: 'red' }}>Error: {notification}</span>}
 
         {showForm &&
           <div>
