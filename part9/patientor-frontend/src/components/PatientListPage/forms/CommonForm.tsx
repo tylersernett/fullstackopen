@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 
 interface CommonFormProps {
+  diagnosisCodeList: string[];
   description: string;
   setDescription: Dispatch<SetStateAction<string>>;
   date: string;
@@ -9,7 +10,7 @@ interface CommonFormProps {
   setSpecialist: Dispatch<SetStateAction<string>>;
 }
 
-const CommonForm: React.FC<CommonFormProps> = ({ description, setDescription, date, setDate, specialist, setSpecialist }) => {
+const CommonForm: React.FC<CommonFormProps> = ({ diagnosisCodeList, description, setDescription, date, setDate, specialist, setSpecialist }) => {
   return (
     <>
       <label>
@@ -25,6 +26,17 @@ const CommonForm: React.FC<CommonFormProps> = ({ description, setDescription, da
       <label>
         Specialist:
         <input type="text" value={specialist} onChange={(e) => setSpecialist(e.target.value)} />
+      </label>
+      <br />
+      <label>
+        Diagnosis Codes:
+        <select multiple>
+          {diagnosisCodeList.map((code) => (
+            <option key={code} value={code}>
+              {code}
+            </option>
+          ))}
+        </select>
       </label>
       <br />
     </>

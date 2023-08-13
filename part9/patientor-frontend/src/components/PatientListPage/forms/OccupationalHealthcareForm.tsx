@@ -1,37 +1,16 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
-import { EntryWithoutId } from "../../../types";
-import CommonForm from "./CommonForm";
+import React, { Dispatch, SetStateAction } from "react";
 
-interface HealthCheckFormProps {
-  onSubmit: (values: EntryWithoutId) => void;
+interface OccupationalHealthcareFormProps {
+  employerName: string;
+  setEmployerName: Dispatch<SetStateAction<string>>;
+  sickLeave: { startDate: string, endDate: string };
+  setSickLeave: Dispatch<SetStateAction<{ startDate: string, endDate: string }>>;
 }
 
-const OccupationalHealthcareForm: React.FC<HealthCheckFormProps> = ({ onSubmit }) => {
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const [specialist, setSpecialist] = useState("");
-  const [employerName, setEmployerName] = useState("");
-  const [sickLeave, setSickLeave] = useState<{ startDate: string; endDate: string }>({
-    startDate: "",
-    endDate: "",
-  });
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    const values: EntryWithoutId = {
-      type: "OccupationalHealthcare",
-      description,
-      date,
-      specialist,
-      employerName,
-      sickLeave: sickLeave.startDate && sickLeave.endDate ? sickLeave : undefined,
-    };
-    onSubmit(values);
-  };
+const OccupationalHealthcareForm: React.FC<OccupationalHealthcareFormProps> = ({ employerName, setEmployerName, sickLeave, setSickLeave }) => {
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CommonForm description={description} setDescription={setDescription} date={date} setDate={setDate} specialist={specialist} setSpecialist={setSpecialist}/>
+    <>
       <label>
         Employer Name:
         <input type="text" value={employerName} onChange={(e) => setEmployerName(e.target.value)} />
@@ -42,9 +21,8 @@ const OccupationalHealthcareForm: React.FC<HealthCheckFormProps> = ({ onSubmit }
         Start Date: <input type="date" value={sickLeave?.startDate || ""} onChange={(e) => setSickLeave({ ...sickLeave, startDate: e.target.value })} />
         End Date: <input type="date" value={sickLeave?.endDate || ""} onChange={(e) => setSickLeave({ ...sickLeave, endDate: e.target.value })} />
       </label>
-      <br />
-      <button type="submit">Submit</button>
-    </form>
+    </>
+
   );
 };
 
