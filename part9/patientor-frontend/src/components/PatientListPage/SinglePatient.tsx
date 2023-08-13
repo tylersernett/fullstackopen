@@ -20,6 +20,7 @@ const SinglePatient = () => {
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
 
+  const [diagnosisCodes, setDiagnosisCodes] = useState<Array<Diagnosis['code']>>();
   const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(HealthCheckRating.Healthy);
   const [employerName, setEmployerName] = useState("");
   const [sickLeave, setSickLeave] = useState<{ startDate: string; endDate: string }>({
@@ -79,6 +80,7 @@ const SinglePatient = () => {
           description,
           date,
           specialist,
+          diagnosisCodes: diagnosisCodes !== undefined ? diagnosisCodes : undefined,
           healthCheckRating,
         };
         break;
@@ -88,6 +90,7 @@ const SinglePatient = () => {
           description,
           date,
           specialist,
+          diagnosisCodes: diagnosisCodes !== undefined ? diagnosisCodes : undefined,
           employerName,
           sickLeave: sickLeave.startDate && sickLeave.endDate ? sickLeave : undefined,
         };
@@ -98,6 +101,7 @@ const SinglePatient = () => {
           description,
           date,
           specialist,
+          diagnosisCodes: diagnosisCodes !== undefined ? diagnosisCodes : undefined,
           discharge
         };
         break;
@@ -160,6 +164,7 @@ const SinglePatient = () => {
                 description={description} setDescription={setDescription}
                 date={date} setDate={setDate}
                 specialist={specialist} setSpecialist={setSpecialist}
+                diagnosisCodes={diagnosisCodes || []} setDiagnosisCodes={setDiagnosisCodes}
               />
 
               {selectedEntryType === "HealthCheck" && <HealthCheckForm healthCheckRating={healthCheckRating} setHealthCheckRating={setHealthCheckRating} />}

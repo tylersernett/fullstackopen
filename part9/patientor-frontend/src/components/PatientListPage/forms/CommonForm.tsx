@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, ChangeEvent } from "react";
+import { Diagnosis } from "../../../types";
 
 interface CommonFormProps {
   diagnosisCodeList: string[];
@@ -8,9 +9,17 @@ interface CommonFormProps {
   setDate: Dispatch<SetStateAction<string>>;
   specialist: string;
   setSpecialist: Dispatch<SetStateAction<string>>;
+  diagnosisCodes: Array<Diagnosis['code']> | undefined;
+  setDiagnosisCodes: Dispatch<SetStateAction<Array<Diagnosis['code']> | undefined>>;
 }
 
-const CommonForm: React.FC<CommonFormProps> = ({ diagnosisCodeList, description, setDescription, date, setDate, specialist, setSpecialist }) => {
+const CommonForm: React.FC<CommonFormProps> = ({ diagnosisCodeList, description, setDescription, date, setDate, specialist, setSpecialist, diagnosisCodes, setDiagnosisCodes }) => {
+
+  const handleDiagnosisCodesChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
+    setDiagnosisCodes(selectedOptions);
+  };
+
   return (
     <>
       <label>
@@ -30,7 +39,7 @@ const CommonForm: React.FC<CommonFormProps> = ({ diagnosisCodeList, description,
       <br />
       <label>
         Diagnosis Codes:
-        <select multiple>
+        <select multiple value={diagnosisCodes} onChange={handleDiagnosisCodesChange}>
           {diagnosisCodeList.map((code) => (
             <option key={code} value={code}>
               {code}
