@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, ChangeEvent } from "react";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"; // Import Material-UI components
 import { Diagnosis } from "../../../types";
 
 interface CommonFormProps {
@@ -37,16 +37,21 @@ const CommonForm: React.FC<CommonFormProps> = ({ diagnosisCodeList, description,
         <input type="text" value={specialist} onChange={(e) => setSpecialist(e.target.value)} />
       </label>
       <br />
-      <label>
-        Diagnosis Codes:
-        <select multiple value={diagnosisCodes} onChange={handleDiagnosisCodesChange}>
+      <FormControl sx={{width:'200px', marginY:'10px'}}>
+        <InputLabel>Diagnosis Codes</InputLabel>
+        <Select
+          multiple
+          value={diagnosisCodes}
+          onChange={(event) => handleDiagnosisCodesChange(event)}
+        >
           {diagnosisCodeList.map((code) => (
-            <option key={code} value={code}>
+            <MenuItem key={code} value={code}>
               {code}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-      </label>
+        </Select>
+      </FormControl>
+
       <br />
     </>
   )
