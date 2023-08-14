@@ -1,4 +1,4 @@
-//hours: 2.5  + 1.5 + 2 + 1 + 1 + 12:20
+//hours: 2.5  + 1.5 + 2 + 1 + 1 + 2.5 + 0.5 + 1.5 + 3 + 2 + 2 + .5 = 20  
 
 import express from 'express';
 import { getBmi } from './bmiCalculator';
