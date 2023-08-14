@@ -132,6 +132,24 @@ const SinglePatient = () => {
         };
         setPatient(updatedPatient);
       }
+
+      //reset fields to default
+      setDescription("")
+      setDate("")
+      setSpecialist("")
+
+      setDiagnosisCodes([]);
+      setHealthCheckRating(HealthCheckRating.Healthy);
+      setEmployerName("");
+      setSickLeave({
+        startDate: "",
+        endDate: "",
+      });
+      setDischarge({
+        date: "",
+        criteria: "",
+      });
+      setShowForm(false);
     } catch (error) {
       console.error('Error posting new entry: ', error);
       if (isAxiosError(error)) {
