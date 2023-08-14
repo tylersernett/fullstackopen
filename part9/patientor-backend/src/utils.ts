@@ -62,9 +62,9 @@ export const toNewPatient = (object: unknown): NewPatient => {
     };
 
     return newPatient;
-  };
+  }
   throw new Error('Incorrect data: some fields are missing');
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////
 

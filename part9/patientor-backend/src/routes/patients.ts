@@ -35,7 +35,7 @@ router.post('/', (req, res) => {
     }
     res.status(400).send(errorMessage);
   }
-})
+});
 
 router.post('/:id/entries', (req, res) => {
   try {
