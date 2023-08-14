@@ -6,12 +6,12 @@ interface HealthCheckFormProps {
 }
 
 const HospitalForm: React.FC<HealthCheckFormProps> = ({ discharge, setDischarge }) => {
-
+  const inputStyle = {margin:'5px'}
   return (
     <label>
-      Discharge
+      <b>Discharge</b>
       <br />
-      Date: <input type="date" value={discharge?.date || ""} onChange={(e) => setDischarge({ ...discharge, date: e.target.value })} />
+      Date: <input type="date" style={inputStyle} value={discharge?.date || ""} onChange={(e) => setDischarge({ ...discharge, date: e.target.value })} />
       Criteria: <input type="text" value={discharge?.criteria || ""} onChange={(e) => setDischarge({ ...discharge, criteria: e.target.value })} />
     </label>
   );

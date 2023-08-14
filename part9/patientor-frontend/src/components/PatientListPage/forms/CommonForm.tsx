@@ -1,3 +1,4 @@
+import React, { Dispatch, SetStateAction } from "react";
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"; // Import Material-UI components
 import { Diagnosis } from "../../../types";
 
@@ -15,26 +16,27 @@ interface CommonFormProps {
 
 const CommonForm: React.FC<CommonFormProps> = ({ diagnosisCodeList, description, setDescription, date, setDate, specialist, setSpecialist, diagnosisCodes, setDiagnosisCodes }) => {
 
-  const handleDiagnosisCodesChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
-    setDiagnosisCodes(selectedOptions);
+  const handleDiagnosisCodesChange = (event: SelectChangeEvent<string[]>) => {
+    setDiagnosisCodes(event.target.value as string[]); // Use type assertion here
   };
+
+  const inputStyle = {margin:'5px'}
 
   return (
     <>
       <label>
         Description:
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <input type="text" value={description} style={inputStyle} onChange={(e) => setDescription(e.target.value)} />
       </label>
       <br />
       <label>
         Date:
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <input type="date" value={date} style={inputStyle} onChange={(e) => setDate(e.target.value)} />
       </label>
       <br />
       <label>
         Specialist:
-        <input type="text" value={specialist} onChange={(e) => setSpecialist(e.target.value)} />
+        <input type="text" value={specialist} style={inputStyle} onChange={(e) => setSpecialist(e.target.value)} />
       </label>
       <br />
       <FormControl sx={{width:'200px', marginY:'10px'}}>
